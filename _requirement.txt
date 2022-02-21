@@ -1,0 +1,5 @@
+cffi==1.15.0
+file==0.1.0
+pycparser==2.21
+signa==0.3.0
+tk==0.1.0
