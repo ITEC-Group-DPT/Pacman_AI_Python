@@ -1,0 +1,83 @@
+Metadata-Version: 2.0
+Name: file
+Version: 0.1.0
+Summary: CFFI bindings for libmagic.
+Home-page: https://github.com/ionelmc/python-file
+Author: Ionel Cristian Mărieș
+Author-email: contact@ionelmc.ro
+License: BSD 2-Clause License
+Description-Content-Type: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Operating System :: Unix
+Classifier: Operating System :: POSIX
+Classifier: Operating System :: Microsoft :: Windows
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Classifier: Programming Language :: Python :: Implementation :: PyPy
+Classifier: Topic :: Utilities
+
+========
+Overview
+========
+
+
+
+CFFI bindings for libmagic.
+
+* Free software: BSD 2-Clause License
+
+Installation
+============
+
+::
+
+    pip install file
+
+Documentation
+=============
+
+https://python-file.readthedocs.io/
+
+Development
+===========
+
+To run the all tests run::
+
+    tox
+
+Note, to combine the coverage data from all the tox environments run:
+
+.. list-table::
+    :widths: 10 90
+    :stub-columns: 1
+
+    - - Windows
+      - ::
+
+            set PYTEST_ADDOPTS=--cov-append
+            tox
+
+    - - Other
+      - ::
+
+            PYTEST_ADDOPTS=--cov-append tox
+
+
+Changelog
+=========
+
+0.1.0 (2017-11-02)
+------------------
+
+* First release on PyPI.
+
+
