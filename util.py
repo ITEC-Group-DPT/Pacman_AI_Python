@@ -107,19 +107,73 @@ class FixedRandom:
 
 
 class Stack:
-    # TODO 23
-    pass
+    def  __init__(self):
+        self.items = []
 
+    def push(self, item):
+        self.items.push(item)
+    
+    def pop(self,item):
+        if self.is_empty():
+            return None
+        else:
+            return self.items.pop()
+
+    def is_empty(self):
+        return self.size() == 0
 
 class Queue:
-    # TODO 24
-    pass
+    def __init__(self):
+        self.data = []
+    def enqueue(self, e):
+        self.data.append(e)
+    def dequeue(self):
+        if self.is_empty():
+            return None
+        self.data.pop(0)
+    def size(self):
+        return len(self.data)
+    def front(self):
+        if self.is_empty():
+            return None
+        else:
+            return self.data[0]
+    def back(self):
+        if self.is_empty():
+            return None
+        return self.data[-1]
+    def is_empty(self):
+        return self.size() == 0
+
+    
 
 
 class PriorityQueue:
-    # TODO 25
-    pass
+    def  __init__(self):
+        self.items = []
 
+    def push(self, item, priority):
+        hq.heappush(self.items, (priority, item))
+
+    def pop(self):
+        return hq.heappop(self.items)
+
+    def isEmpty(self):
+        return len(self.items) == 0
+
+    def update(self, item, priority):
+        # If item already in priority queue with higher priority, 
+        #                  update its priority and rebuild the heap.
+        # If item already in priority queue with equal or lower priority, do nothing.
+        # If item not in priority queue, do the same thing as self.push.
+        for i, (pr, it) in enumerate(self.items):
+            if it == item and pr > priority:
+                self.items.remove(self.items[i])
+                self.items.append((priority, item))
+                hq.heapify(self.items)
+                return
+
+        self.push(item, priority)
 
 class PriorityQueueWithFunction(PriorityQueue):
     '''
