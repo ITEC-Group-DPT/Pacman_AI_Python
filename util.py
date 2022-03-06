@@ -130,7 +130,7 @@ class Queue:
     def dequeue(self):
         if self.is_empty():
             return None
-        self.data.pop(0)
+        return self.data.pop(0)
     def size(self):
         return len(self.data)
     def front(self):

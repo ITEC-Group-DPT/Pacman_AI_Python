@@ -3,6 +3,7 @@ import random
 from game import Agent
 from game import Directions
 
+import problems
 
 class GoWestAgent(Agent):
     def getAction(self, state):
@@ -20,7 +21,10 @@ class RandomAgent(Agent):
 
 
 class SearchAgent(Agent):
-    def registerInitialState(self, state):
+    def registerInitialState(self, state):   
+        self.start = state.getPacmanPosition()
+        self.wallGrid = state.getWalls()
+        self.foodPosition = state.getFood()
         """
         This is the first time that the agent sees the layout of the game
         board. Here, we choose a path to the goal. In this phase, the agent
@@ -39,15 +43,29 @@ class SearchAgent(Agent):
 
         state: a GameState object (pacman.py)
         """
+        # return Directions.STOP
         # TODO 12
 
-
+import search
 class BFSFoodSearchAgent(SearchAgent):
+    def registerInitialState(self, state):
+        self.action = search.breadthFirstSearch(problems.SingleFoodSearchProblem(state))
+        print(action)
+    def getAction(self, state):
+        
+        # if self.index == len(self.action):
+        #     self.index =-1
+        self.index+=1
+
+        return self.action[self.index]
+    
     # TODO 13
     pass
 
 
 class DFSFoodSearchAgent(SearchAgent):
+    def __init__(self):
+        self.search = search.depthFirstSearch(SearchAgent)
     # TODO 14
     pass
 

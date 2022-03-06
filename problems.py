@@ -1,4 +1,5 @@
 import util
+from game import Actions
 
 
 class SearchProblem:
@@ -47,18 +48,38 @@ class SearchProblem:
 class SingleFoodSearchProblem(SearchProblem):
     def __init__(self, startingGameState):
         # TODO 1
+        # pacman start (col,row bottom up)
+        self.start = startingGameState.getPacmanPosition()  
+        self.wallGrid = startingGameState.getWalls()
+        self.foodPosition = startingGameState.getFood()
+
+        for col in range(self.foodPosition.width - 1 ):
+            for row in range(self.foodPosition.height - 1):
+                if self.foodPosition.data[col][row] == True:
+                    self.goal = (col,row)
+                    break
+        
         pass
 
     def getStartState(self):
+        return self.start
         # TODO 1
         pass
 
     def isGoalState(self, state):
-        # TODO 3
-        pass
+        return state == self.goal
 
     def getSuccessors(self, state):
-        # TODO 4
+        successors = []
+        for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
+            x,y = state
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            if not self.walls[nextx][nexty]:
+                nextState = (nextx, nexty)
+                cost = self.costFn(nextState)
+                successors.append( ( nextState, action, cost) )
+        return successors
         pass
 
     def getCostOfActions(self, actions):
