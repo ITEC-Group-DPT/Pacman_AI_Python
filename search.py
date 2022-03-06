@@ -25,23 +25,23 @@ def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
 
     #to be explored (FIFO)
-    frontier = util.Queue()
+    queue = util.Queue()
     
     #previously expanded states (for cycle checking), holds states
-    exploredNodes = []
+    visitedNodes = []
     
     startState = problem.getStartState()
-    startNode = (startState, [], 0) #(state, action, cost)
+    startNode = (startState, []) 
     
-    frontier.enqueue(startNode)
+    queue.enqueue(startNode)
     
-    while (frontier.is_empty() == False):
+    while (queue.is_empty() == False):
         #begin exploring first (earliest-pushed) node on frontier
-        currentState, actions, currentCost = frontier.dequeue()
+        currentState, actions = queue.dequeue()
         
-        if currentState not in exploredNodes:
+        if currentState not in visitedNodes:
             #put popped node state into explored list
-            exploredNodes.append(currentState)
+            visitedNodes.append(currentState)
 
             if problem.isGoalState(currentState):
                 return actions
@@ -49,12 +49,12 @@ def breadthFirstSearch(problem):
                 #list of (successor, action, stepCost)
                 successors = problem.getSuccessors(currentState)
                 
-                for succState, succAction, succCost in successors:
+                for succState, succAction in successors:
                     newAction = actions + [succAction]
-                    newCost = currentCost + succCost
-                    newNode = (succState, newAction, newCost)
+                 
+                    newNode = (succState, newAction)
 
-                    frontier.push(newNode)
+                    queue.enqueue(newNode)
 
     return actions
     # TODO 18

@@ -1,6 +1,6 @@
 import util
 from game import Actions
-
+from game import Directions
 
 class SearchProblem:
     """
@@ -75,15 +75,17 @@ class SingleFoodSearchProblem(SearchProblem):
             x,y = state
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
-            if not self.walls[nextx][nexty]:
+            if self.wallGrid[nextx][nexty] == False:
                 nextState = (nextx, nexty)
-                cost = self.costFn(nextState)
-                successors.append( ( nextState, action, cost) )
+                # cost = self.costFn(nextState)
+                # successors.append( ( nextState, action, cost) )
+                successors.append((nextState, action))
         return successors
         pass
 
     def getCostOfActions(self, actions):
         # TODO 5
+        print(len(actions))
         pass
 
 

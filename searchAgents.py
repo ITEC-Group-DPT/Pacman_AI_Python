@@ -49,15 +49,17 @@ class SearchAgent(Agent):
 import search
 class BFSFoodSearchAgent(SearchAgent):
     def registerInitialState(self, state):
-        self.action = search.breadthFirstSearch(problems.SingleFoodSearchProblem(state))
-        print(action)
+        self.problem = problems.SingleFoodSearchProblem(state)
+        self.actions = search.breadthFirstSearch(self.problem)
+        self.problem.getCostOfActions(self.actions)
+        self.index = -1
     def getAction(self, state):
         
         # if self.index == len(self.action):
         #     self.index =-1
         self.index+=1
 
-        return self.action[self.index]
+        return self.actions[self.index]
     
     # TODO 13
     pass
