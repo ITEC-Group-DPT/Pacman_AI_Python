@@ -13,7 +13,8 @@ w = Directions.WEST
 
 
 def depthFirstSearch(problem):
-    print(problem.foodPosition)
+
+    pass
 
     # TODO 17
 
@@ -56,7 +57,7 @@ def breadthFirstSearch(problem):
         if queue.is_empty(): 
             problem.foodPosition.pop(0)
     return paths
-    # TODO 18
+    
 
 
 def uniformCostSearch(problem):
@@ -94,6 +95,9 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     """
     return a path to the goal
     """
+
+    
+    pass
     # TODO 22
 
 

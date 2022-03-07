@@ -27,9 +27,6 @@ class SearchAgent(Agent):
     #     self.algorithm=None
         
     def registerInitialState(self, state):   
-        # self.start = state.getPacmanPosition()
-        # self.wallGrid = state.getWalls()
-        # self.foodPosition = state.getFood()
         self.index = -1
         self.actions = self.algorithm(self.problem(state))
         """
@@ -40,7 +37,7 @@ class SearchAgent(Agent):
 
         state: a GameState object (pacman.py)
         """
-        # TODO 11
+
 
     def getAction(self, state):
         """
@@ -54,7 +51,7 @@ class SearchAgent(Agent):
         self.index+=1
         return self.actions[self.index] if self.index < len(self.actions) else Directions.STOP
         # return Directions.STOP
-        # TODO 12
+  
 
 
 class BFSSingleFoodSearchAgent(SearchAgent):
@@ -66,6 +63,7 @@ class BFSFoodSearchAgent(SearchAgent):
     def __init__(self):
         self.problem = problems.MultiFoodSearchProblem
         self.algorithm = search.breadthFirstSearch
+        
 
 
 class DFSSingleFoodSearchAgent(SearchAgent):

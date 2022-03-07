@@ -47,12 +47,14 @@ class SearchProblem:
 
 class SingleFoodSearchProblem(SearchProblem):
     def __init__(self, startingGameState):
-        # TODO 1
+     
         # pacman start (col,row bottom up)
         self.start = startingGameState.getPacmanPosition()  
         self.wallGrid = startingGameState.getWalls()
         self.foodGrid = startingGameState.getFood()
+        print(self.foodGrid)
         self.foodPosition = []
+
         for col in range(self.foodGrid.width - 1 ):
             for row in range(self.foodGrid.height - 1):
                 if self.foodGrid.data[col][row] == True:
@@ -65,8 +67,6 @@ class SingleFoodSearchProblem(SearchProblem):
 
     def getStartState(self):
         return self.start
-        # TODO 1
-        pass
 
     def isGoalState(self, state):
         return state in self.foodPosition
@@ -86,7 +86,6 @@ class SingleFoodSearchProblem(SearchProblem):
        
 
     def getCostOfActions(self, actions):
-        # TODO 5
         print(len(actions))
         pass
 
@@ -100,6 +99,8 @@ class MultiFoodSearchProblem(SearchProblem):
         self.foodGrid = startingGameState.getFood()
 
         self.foodPosition = []
+
+        self.heu = []
 
         for col in range(self.foodGrid.width - 1 ):
             for row in range(self.foodGrid.height - 1):
@@ -128,4 +129,4 @@ class MultiFoodSearchProblem(SearchProblem):
 
     def getCostOfActions(self, actions):
         print(len(actions))
-        pass
+       
