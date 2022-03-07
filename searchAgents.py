@@ -52,7 +52,7 @@ class SearchAgent(Agent):
         """
 
         self.index+=1
-        return self.actions[self.index]
+        return self.actions[self.index] if self.index < len(self.actions) else Directions.STOP
         # return Directions.STOP
         # TODO 12
 
@@ -68,26 +68,34 @@ class BFSFoodSearchAgent(SearchAgent):
         self.algorithm = search.breadthFirstSearch
 
 
-
+class DFSSingleFoodSearchAgent(SearchAgent):
+    def __init__(self):
+        self.problem = problems.SingleFoodSearchProblem
+        self.algorithm = search.depthFirstSearch
 
 class DFSFoodSearchAgent(SearchAgent):
     def __init__(self):
-        self.search = search.depthFirstSearch(SearchAgent)
-    # TODO 14
-    pass
+        self.problem = problems.MultiFoodSearchProblem
+        self.algorithm = search.depthFirstSearch
 
+
+class UCSSingleFoodSearchAgent(SearchAgent):
+    def __init__(self):
+        self.problem = problems.SingleFoodSearchProblem
+        self.algorithm = search.uniformCostSearch
 
 class UCSFoodSearchAgent(SearchAgent):
-    # TODO 15
     def __init__(self):
-        # SearchAgent.__init__(self)
         self.problem = problems.MultiFoodSearchProblem
         self.algorithm = search.uniformCostSearch
 
 
-    pass
-
+class AStarFoodSearchAgent(SearchAgent):
+    def __init__(self):
+        self.problem = problems.SingleFoodSearchProblem
+        self.algorithm = search.aStarSearch
 
 class AStarFoodSearchAgent(SearchAgent):
-    # TODO 16
-    pass
+    def __init__(self):
+        self.problem = problems.MultiFoodSearchProblem
+        self.algorithm = search.aStarSearch
