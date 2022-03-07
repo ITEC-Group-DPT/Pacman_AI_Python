@@ -51,13 +51,15 @@ class SingleFoodSearchProblem(SearchProblem):
         # pacman start (col,row bottom up)
         self.start = startingGameState.getPacmanPosition()  
         self.wallGrid = startingGameState.getWalls()
-        self.foodPosition = startingGameState.getFood()
-
-        for col in range(self.foodPosition.width - 1 ):
-            for row in range(self.foodPosition.height - 1):
-                if self.foodPosition.data[col][row] == True:
-                    self.goal = (col,row)
+        self.foodGrid = startingGameState.getFood()
+        self.foodPosition = []
+        for col in range(self.foodGrid.width - 1 ):
+            for row in range(self.foodGrid.height - 1):
+                if self.foodGrid.data[col][row] == True:
+                    self.foodPosition.append((col,row))
                     break
+            
+            if (len(self.foodPosition) == 1): break
         
         pass
 
@@ -67,21 +69,21 @@ class SingleFoodSearchProblem(SearchProblem):
         pass
 
     def isGoalState(self, state):
-        return state == self.goal
+        return state in self.foodPosition
 
     def getSuccessors(self, state):
         successors = []
-        for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
+        for action in [Directions.NORTH, Directions.EAST, Directions.WEST,Directions.SOUTH]:
             x,y = state
             dx, dy = Actions.directionToVector(action)
-            nextx, nexty = int(x + dx), int(y + dy)
-            if self.wallGrid[nextx][nexty] == False:
-                nextState = (nextx, nexty)
-                # cost = self.costFn(nextState)
-                # successors.append( ( nextState, action, cost) )
+            neighborX, neighborY = int(x + dx), int(y + dy)
+
+            if self.wallGrid[neighborX][neighborY] == False:
+                nextState = (neighborX, neighborY)
                 successors.append((nextState, action))
+
         return successors
-        pass
+       
 
     def getCostOfActions(self, actions):
         # TODO 5
@@ -91,21 +93,39 @@ class SingleFoodSearchProblem(SearchProblem):
 
 class MultiFoodSearchProblem(SearchProblem):
     def __init__(self, startingGameState):
-        # TODO 6
-        pass
+        self.start = startingGameState.getPacmanPosition() 
 
+        self.wallGrid = startingGameState.getWalls()
+
+        self.foodGrid = startingGameState.getFood()
+
+        self.foodPosition = []
+
+        for col in range(self.foodGrid.width - 1 ):
+            for row in range(self.foodGrid.height - 1):
+                if self.foodGrid.data[col][row] == True:
+                    self.foodPosition.append((col,row))
+    
     def getStartState(self):
-        # TODO 7
-        pass
+        return self.start
 
     def isGoalState(self, state):
-        # TODO 8
-        pass
+        return state in self.foodPosition
 
     def getSuccessors(self, state):
-        # TODO 9
-        pass
+        successors = []
+        for action in [Directions.NORTH, Directions.EAST, Directions.WEST,Directions.SOUTH]:
+            x,y = state
+            dx, dy = Actions.directionToVector(action)
+            neighborX, neighborY = int(x + dx), int(y + dy)
+
+            if self.wallGrid[neighborX][neighborY] == False:
+                nextState = (neighborX, neighborY)
+                successors.append((nextState, action))
+
+        return successors
+       
 
     def getCostOfActions(self, actions):
-        # TODO 10
+        print(len(actions))
         pass

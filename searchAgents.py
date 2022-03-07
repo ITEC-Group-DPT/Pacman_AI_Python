@@ -4,6 +4,7 @@ from game import Agent
 from game import Directions
 
 import problems
+import search
 
 class GoWestAgent(Agent):
     def getAction(self, state):
@@ -21,10 +22,16 @@ class RandomAgent(Agent):
 
 
 class SearchAgent(Agent):
+    # def __init__(self):
+    #     self.problem =None
+    #     self.algorithm=None
+        
     def registerInitialState(self, state):   
-        self.start = state.getPacmanPosition()
-        self.wallGrid = state.getWalls()
-        self.foodPosition = state.getFood()
+        # self.start = state.getPacmanPosition()
+        # self.wallGrid = state.getWalls()
+        # self.foodPosition = state.getFood()
+        self.index = -1
+        self.actions = self.algorithm(self.problem(state))
         """
         This is the first time that the agent sees the layout of the game
         board. Here, we choose a path to the goal. In this phase, the agent
@@ -43,26 +50,24 @@ class SearchAgent(Agent):
 
         state: a GameState object (pacman.py)
         """
+
+        self.index+=1
+        return self.actions[self.index]
         # return Directions.STOP
         # TODO 12
 
-import search
-class BFSFoodSearchAgent(SearchAgent):
-    def registerInitialState(self, state):
-        self.problem = problems.SingleFoodSearchProblem(state)
-        self.actions = search.breadthFirstSearch(self.problem)
-        self.problem.getCostOfActions(self.actions)
-        self.index = -1
-    def getAction(self, state):
-        
-        # if self.index == len(self.action):
-        #     self.index =-1
-        self.index+=1
 
-        return self.actions[self.index]
-    
-    # TODO 13
-    pass
+class BFSSingleFoodSearchAgent(SearchAgent):
+    def __init__(self):
+        self.problem = problems.SingleFoodSearchProblem
+        self.algorithm = search.breadthFirstSearch
+
+class BFSFoodSearchAgent(SearchAgent):
+    def __init__(self):
+        self.problem = problems.MultiFoodSearchProblem
+        self.algorithm = search.breadthFirstSearch
+
+
 
 
 class DFSFoodSearchAgent(SearchAgent):
@@ -74,6 +79,12 @@ class DFSFoodSearchAgent(SearchAgent):
 
 class UCSFoodSearchAgent(SearchAgent):
     # TODO 15
+    def __init__(self):
+        # SearchAgent.__init__(self)
+        self.problem = problems.MultiFoodSearchProblem
+        self.algorithm = search.uniformCostSearch
+
+
     pass
 
 

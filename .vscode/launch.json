@@ -11,17 +11,8 @@
             "request": "launch",
             "program": "pacman.py",
             "console": "integratedTerminal",
-            "args": ["-p", "BFSFoodSearchAgent"],
+            "args": ["-p", "BFSSingleFoodSearchAgent"],
             "justMyCode": true
-        },
-        {
-            "name": "Python: Attach",
-            "type": "python",
-            "request": "attach",
-            "connect": {
-              "host": "localhost",
-              "port": 5678
-            }
         }
     ]
 }

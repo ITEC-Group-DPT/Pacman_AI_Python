@@ -5,6 +5,7 @@ Pacman agents (in searchAgents.py).
 
 from game import Directions
 import util
+import copy
 n = Directions.NORTH
 s = Directions.SOUTH
 e = Directions.EAST
@@ -13,57 +14,55 @@ w = Directions.WEST
 
 def depthFirstSearch(problem):
     print(problem.foodPosition)
-    
-    
+
     # TODO 17
 
 
 def breadthFirstSearch(problem):
-    '''
+    """
     return a path to the goal
-    '''
+    """
     """Search the shallowest nodes in the search tree first."""
+    # startState = problem.getStartState()
 
-    #to be explored (FIFO)
-    queue = util.Queue()
+    # #to be explored (FIFO)
+    paths = []
     
-    #previously expanded states (for cycle checking), holds states
-    visitedNodes = []
-    
-    startState = problem.getStartState()
-    startNode = (startState, []) 
-    
-    queue.enqueue(startNode)
-    
-    while (queue.is_empty() == False):
-        #begin exploring first (earliest-pushed) node on frontier
-        currentState, actions = queue.dequeue()
-        
-        if currentState not in visitedNodes:
-            #put popped node state into explored list
-            visitedNodes.append(currentState)
+    while (len(problem.foodPosition) != 0):
+        queue = util.Queue()
+        visitedNodes = []   
+        start = (problem.getStartState(), paths)
 
-            if problem.isGoalState(currentState):
-                return actions
-            else:
-                #list of (successor, action, stepCost)
-                successors = problem.getSuccessors(currentState)
-                
-                for succState, succAction in successors:
-                    newAction = actions + [succAction]
-                 
-                    newNode = (succState, newAction)
+        queue.enqueue(start)
 
-                    queue.enqueue(newNode)
+        while queue.is_empty() == False:
 
-    return actions
+            currentState, paths = queue.dequeue()
+
+            if currentState not in visitedNodes:
+                visitedNodes.append(currentState)
+                if problem.isGoalState(currentState):
+                    problem.start = currentState
+                    problem.foodPosition.remove(currentState)
+                    break
+                else:
+                    
+                    successors = problem.getSuccessors(currentState)
+
+                    for successorState, successorAction in successors:
+                        successorPath = paths + [successorAction]
+
+                        queue.enqueue((successorState,successorPath))
+        if queue.is_empty(): 
+            problem.foodPosition.pop(0)
+    return paths
     # TODO 18
 
 
 def uniformCostSearch(problem):
-    '''
+    """
     return a path to the goal
-    '''
+    """
     # TODO 19
 
 
@@ -92,9 +91,9 @@ def multiFoodSearchHeuristic(state, problem=None):
 
 
 def aStarSearch(problem, heuristic=nullHeuristic):
-    '''
+    """
     return a path to the goal
-    '''
+    """
     # TODO 22
 
 
