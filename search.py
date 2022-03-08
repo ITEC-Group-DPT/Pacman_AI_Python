@@ -14,9 +14,36 @@ w = Directions.WEST
 
 def depthFirstSearch(problem):
 
-    pass
+    paths = []
+    
+    while (len(problem.foodPosition) != 0):
+        stack = util.Stack()
+        visitedNodes = []   
+        start = (problem.getStartState(), paths)
 
-    # TODO 17
+        stack.push(start)
+
+        while stack.is_empty() == False:
+
+            currentState, paths = stack.pop()
+
+            if currentState not in visitedNodes:
+                visitedNodes.append(currentState)
+                if problem.isGoalState(currentState):
+                    problem.start = currentState
+                    problem.foodPosition.remove(currentState)
+                    break
+                else:
+                    
+                    successors = problem.getSuccessors(currentState)
+
+                    for successorState, successorAction in successors:
+                        successorPath = paths + [successorAction]
+
+                        stack.push((successorState,successorPath))
+        if stack.is_empty(): 
+            problem.foodPosition.pop(0)
+    return paths
 
 
 def breadthFirstSearch(problem):

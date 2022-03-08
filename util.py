@@ -111,13 +111,16 @@ class Stack:
         self.items = []
 
     def push(self, item):
-        self.items.push(item)
+        self.items.append(item)
     
-    def pop(self,item):
+    def pop(self): # remove item args
         if self.is_empty():
             return None
         else:
             return self.items.pop()
+
+    def size(self): # copy size def
+        return len(self.items)
 
     def is_empty(self):
         return self.size() == 0
