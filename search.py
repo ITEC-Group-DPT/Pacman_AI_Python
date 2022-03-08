@@ -67,7 +67,7 @@ def uniformCostSearch(problem):
     """
     # TODO 19
 
-    paths = []
+    paths = []  # list of actions from initial state
 
     while len(problem.foodPosition) != 0:
         pQueue = util.PriorityQueue()
@@ -79,21 +79,23 @@ def uniformCostSearch(problem):
         pQueue.push(startNode, 0)  # push it into the priority queue
 
         while not pQueue.isEmpty():  # loop until pQueue is empty
-            totalCost, (currentState, paths) = pQueue.pop()  # unpack the popped node
+            # unpack the popped node, totalCost is the total cost from initial state to current state
+            totalCost, (currentState, paths) = pQueue.pop()
             visitedNodes.append(currentState)  # mark the current state (x,y) as visited
 
             if problem.isGoalState(currentState):  # check whether the current state (x,y) is goal state (food position)
                 problem.start = currentState  # assign the new starting state as current state
                 problem.foodPosition.remove(currentState)  # remove the food from the food list (already eaten)
-                break  # start UCS again with new starting node as the food position
+                break  # start UCS again with new starting node as the current food position
 
             successors = problem.getSuccessors(currentState)  # get current node's successors
             for successorState, successorAction in successors:  # for each successor
                 if successorState not in visitedNodes:  # check whether successor is visited
-                    # add current path with a new successor's path (WEST, EAST,...)
-                    successorPath = paths + [successorAction]
-                    successorCost = 1  # in pacman, every successor has a cost of 1
-                    pQueue.push((successorState, successorPath), totalCost + successorCost)  # push in the new successor
+                    successorPath = paths + [successorAction]  # add current path with a new successor's actions
+                    successorNode = (successorState, successorPath)  # new successor node
+
+                    newTotalCost = totalCost + 1  # in pacman, every successor has a cost of 1
+                    pQueue.push(successorNode, newTotalCost)  # push the new successor in pQueue
 
         # check whether queue is empty means all node has been traversed
         # this happens when some food can't be reached by pacman
