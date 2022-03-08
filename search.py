@@ -33,6 +33,7 @@ def breadthFirstSearch(problem):
         queue = util.Queue()
         visitedNodes = []   
         start = (problem.getStartState(), paths)
+        print(start)
 
         queue.enqueue(start)
 
@@ -59,7 +60,7 @@ def breadthFirstSearch(problem):
     return paths
     
 
-
+# same implementation as BFS because all successor cost is the same
 def uniformCostSearch(problem):
     """
     return a path to the goal
@@ -68,25 +69,33 @@ def uniformCostSearch(problem):
 
     paths = []
 
-    while (len(problem.foodPosition) != 0):
+    while len(problem.foodPosition) != 0:
         pQueue = util.PriorityQueue()
-        visited = []
-        # a node = (curr pos, paths from start to curr pos, cost from start to cur pos)
-        start = (problem.getStartState(), paths, 0)
-        pQueue.push(start, 0)
+        visitedNodes = []
+
+        startNode = (problem.getStartState(), paths)
+        pQueue.push(startNode, 0)
 
         while not pQueue.isEmpty():
-            currentState, paths, totalCost = pQueue.pop()
-            visited.append(currentState)
+            totalCost, (currentState, paths) = pQueue.pop()
+            visitedNodes.append(currentState)
 
             if problem.isGoalState(currentState):
-                pass
+                problem.start = currentState
+                break
 
             successors = problem.getSuccessors(currentState)
-
             for successorState, successorAction in successors:
-                successorPath = paths + [successorAction]
-                pQueue.enqueue((successorState, successorPath))
+                if successorState not in visitedNodes:
+                    successorPath = paths + [successorAction]
+                    successorCost = 1  # every successor has a cost of 1 in pacman
+                    pQueue.push((successorState, successorPath), totalCost + successorCost)
+                    print(pQueue)
+
+        if pQueue.isEmpty():
+            problem.foodPosition.pop(0)
+
+    return paths
 
 
 
