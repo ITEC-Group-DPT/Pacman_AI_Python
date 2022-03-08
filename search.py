@@ -66,6 +66,29 @@ def uniformCostSearch(problem):
     """
     # TODO 19
 
+    paths = []
+
+    while (len(problem.foodPosition) != 0):
+        pQueue = util.PriorityQueue()
+        visited = []
+        # a node = (curr pos, paths from start to curr pos, cost from start to cur pos)
+        start = (problem.getStartState(), paths, 0)
+        pQueue.push(start, 0)
+
+        while not pQueue.isEmpty():
+            currentState, paths, totalCost = pQueue.pop()
+            visited.append(currentState)
+
+            if problem.isGoalState(currentState):
+                pass
+
+            successors = problem.getSuccessors(currentState)
+
+            for successorState, successorAction in successors:
+                successorPath = paths + [successorAction]
+                pQueue.enqueue((successorState, successorPath))
+
+
 
 def nullHeuristic(state, problem=None):
     """

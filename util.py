@@ -1,6 +1,7 @@
 import inspect
 import random
 import sys
+import heapq as hq
 
 import signa as signa
 
