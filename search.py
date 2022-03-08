@@ -72,8 +72,8 @@ def uniformCostSearch(problem):
     while len(problem.foodPosition) != 0:
         pQueue = util.PriorityQueue()
         visitedNodes = []
-        # a node contains its position and paths from initial node
         # a state is a position (x, y)
+        # a node contains its state (position) and the path from initial node
         # assign the starting node with its position and paths from initial node
         startNode = (problem.getStartState(), paths)
         pQueue.push(startNode, 0)  # push it into the priority queue
