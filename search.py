@@ -60,7 +60,7 @@ def breadthFirstSearch(problem):
     return paths
     
 
-# same implementation as BFS because all successor cost is the same
+# same implementation as BFS because all successors' cost are the same
 def uniformCostSearch(problem):
     """
     return a path to the goal
@@ -72,26 +72,31 @@ def uniformCostSearch(problem):
     while len(problem.foodPosition) != 0:
         pQueue = util.PriorityQueue()
         visitedNodes = []
-
+        # a node contains its position and paths from initial node
+        # a state is a position (x, y)
+        # assign the starting node with its position and paths from initial node
         startNode = (problem.getStartState(), paths)
-        pQueue.push(startNode, 0)
+        pQueue.push(startNode, 0)  # push it into the priority queue
 
-        while not pQueue.isEmpty():
-            totalCost, (currentState, paths) = pQueue.pop()
-            visitedNodes.append(currentState)
+        while not pQueue.isEmpty():  # loop until pQueue is empty
+            totalCost, (currentState, paths) = pQueue.pop()  # unpack the popped node
+            visitedNodes.append(currentState)  # mark the current state (x,y) as visited
 
-            if problem.isGoalState(currentState):
-                problem.start = currentState
-                break
+            if problem.isGoalState(currentState):  # check whether the current state (x,y) is goal state (food position)
+                problem.start = currentState  # assign the new starting state as current state
+                problem.foodPosition.remove(currentState)  # remove the food from the food list (already eaten)
+                break  # start UCS again with new starting node as the food position
 
-            successors = problem.getSuccessors(currentState)
-            for successorState, successorAction in successors:
-                if successorState not in visitedNodes:
+            successors = problem.getSuccessors(currentState)  # get current node's successors
+            for successorState, successorAction in successors:  # for each successor
+                if successorState not in visitedNodes:  # check whether successor is visited
+                    # add current path with a new successor's path (WEST, EAST,...)
                     successorPath = paths + [successorAction]
-                    successorCost = 1  # every successor has a cost of 1 in pacman
-                    pQueue.push((successorState, successorPath), totalCost + successorCost)
-                    print(pQueue)
+                    successorCost = 1  # in pacman, every successor has a cost of 1
+                    pQueue.push((successorState, successorPath), totalCost + successorCost)  # push in the new successor
 
+        # check whether queue is empty means all node has been traversed
+        # this happens when some food can't be reached by pacman
         if pQueue.isEmpty():
             problem.foodPosition.pop(0)
 
