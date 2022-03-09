@@ -85,10 +85,13 @@ def uniformCostSearch(problem):
             totalCost, (currentState, paths) = pQueue.pop()
             visitedNodes.append(currentState)  # mark the current state (x,y) as visited
 
-            if problem.isGoalState(currentState):  # check whether the current state (x,y) is goal state (food position)
+            if currentState in problem.foodPosition:  # check whether the current state (x,y) is food state
                 problem.start = currentState  # assign the new starting state as current state
                 problem.foodPosition.remove(currentState)  # remove the food from the food list (already eaten)
                 break  # start UCS again with new starting node as the current food position
+
+            if problem.isGoalState(currentState):
+                return paths
 
             successors = problem.getSuccessors(currentState)  # get current node's successors
             for successorState, successorAction in successors:  # for each successor
