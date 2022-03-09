@@ -94,10 +94,10 @@ def multiFoodSearchHeuristic(state, problem=None):
     foodToFood = []
 
     for food in problem.foodPosition:
-        agentToFood.append((food, getMazeDistance(state, food, problem)))
+        agentToFood.append(getMazeDistance(state, food, problem))
         for food2 in problem.foodPosition:
             if food != food2:
-                foodToFood.append((food, getMazeDistance(food, food2, problem)))
+                foodToFood.append(getMazeDistance(food, food2, problem))
 
     return min(agentToFood) + max(foodToFood)
 
@@ -107,7 +107,8 @@ def multiFoodSearchHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     # singleFoodSearchHeuristic(problem.getStartState(), problem)
 
-    exploredNodeHeuristic = multiFoodSearchHeuristic(problem.getStartState(), problem)
+    # truyen vao toa do cua pacman hien tai
+    startNodeHeuristic = multiFoodSearchHeuristic(problem.getStartState(), problem)
     """
     return a path to the goal
     """
