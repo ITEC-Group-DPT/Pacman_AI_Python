@@ -53,6 +53,8 @@ class SingleFoodSearchProblem(SearchProblem):
         self.wallGrid = startingGameState.getWalls()
         self.foodGrid = startingGameState.getFood()
         print(self.foodGrid)
+
+        self.goal = None
         self.foodPosition = []
 
         for col in range(self.foodGrid.width - 1 ):
@@ -99,8 +101,9 @@ class MultiFoodSearchProblem(SearchProblem):
         self.foodGrid = startingGameState.getFood()
 
         self.foodPosition = []
+        self.goal = None
 
-        self.heu = []
+        self.nodeDistance = {}
 
         for col in range(self.foodGrid.width - 1 ):
             for row in range(self.foodGrid.height - 1):
@@ -111,7 +114,7 @@ class MultiFoodSearchProblem(SearchProblem):
         return self.start
 
     def isGoalState(self, state):
-        return state in self.foodPosition
+        return self.goal is not None and state == self.goal
 
     def getSuccessors(self, state):
         successors = []
@@ -129,4 +132,4 @@ class MultiFoodSearchProblem(SearchProblem):
 
     def getCostOfActions(self, actions):
         print(len(actions))
-       
+
