@@ -29,38 +29,38 @@ def breadthFirstSearch(problem):
     # #to be explored (FIFO)
     paths = []
 
-    while (len(problem.foodPosition) != 0):
+    for i in range(len(problem.foodPosition)):
         queue = util.Queue()
         visitedNodes = []
-        start = (problem.getStartState(), paths)
-        print(start)
+        startNode = (problem.getStartState(), paths)
+        queue.enqueue(startNode)
 
-        queue.enqueue(start)
-
-        while queue.is_empty() == False:
-
+        while not queue.is_empty():
             currentState, paths = queue.dequeue()
+            visitedNodes.append(currentState)
 
-            if currentState not in visitedNodes:
-                visitedNodes.append(currentState)
-                if currentState in problem.foodPosition:
-                    problem.start = currentState
-                    problem.foodPosition.remove(currentState)
-                    break
+            if currentState in problem.foodPosition:
+                problem.start = currentState
+                problem.foodPosition.remove(currentState)
+                break
 
-                if problem.isGoalState(currentState):
-                    return paths
+            if problem.isGoalState(currentState):
+                return paths
+
+            successors = problem.getSuccessors(currentState)
+            for successorState, successorAction in successors:
+                if successorState not in visitedNodes:
+                    successorPath = paths + [successorAction]
+                    queue.enqueue((successorState, successorPath))
                 else:
+                    # happens when all nodes have been traversed
+                    # update the new start node as the current state
+                    # if you don't update, the next for loop will use the previous starting node
+                    # therefore high chance of leading to illegal actions
+                    problem.start = currentState
 
-                    successors = problem.getSuccessors(currentState)
-
-                    for successorState, successorAction in successors:
-                        successorPath = paths + [successorAction]
-
-                        queue.enqueue((successorState, successorPath))
-        if queue.is_empty():
-            problem.foodPosition.pop(0)
     return paths
+
 
 # same implementation as BFS because all successors' cost are the same
 def uniformCostSearch(problem):
@@ -71,7 +71,7 @@ def uniformCostSearch(problem):
 
     paths = []  # list of actions from initial state
 
-    while len(problem.foodPosition) != 0:
+    for i in range(len(problem.foodPosition)):
         pQueue = util.PriorityQueue()
         visitedNodes = []
         # a state is a position (x, y)
@@ -101,14 +101,14 @@ def uniformCostSearch(problem):
 
                     newTotalCost = totalCost + 1  # in pacman, every successor has a cost of 1
                     pQueue.push(successorNode, newTotalCost)  # push the new successor in pQueue
-
-        # check whether queue is empty means all node has been traversed
-        # this happens when some food can't be reached by pacman
-        if pQueue.isEmpty():
-            problem.foodPosition.pop(0)
+                else:
+                    # happens when all nodes have been traversed
+                    # update the new start node as the current state
+                    # if you don't update, the next for loop will use the previous starting node
+                    # therefore high chance of leading to illegal actions
+                    problem.start = currentState
 
     return paths
-
 
 
 def nullHeuristic(state, problem=None):
