@@ -100,7 +100,7 @@ def uniformCostSearch(problem):
                     successorNode = (successorState, successorPath)  # new successor node
 
                     newTotalCost = totalCost + 1  # in pacman, every successor has a cost of 1
-                    pQueue.push(successorNode, newTotalCost)  # push the new successor in pQueue
+                    pQueue.update(successorNode, newTotalCost)  # push the new successor in pQueue
                 else:
                     # happens when all nodes have been traversed
                     # update the new start node as the current state
