@@ -15,10 +15,10 @@ w = Directions.WEST
 
 def depthFirstSearch(problem):
     paths = []
-    
+
     for i in range(len(problem.foodPosition)):
         stack = util.Stack()
-        visitedNodes = []   
+        visitedNodes = []
         startNode = (problem.getStartState(), paths)
         stack.push(startNode)
 
@@ -172,17 +172,21 @@ def multiFoodSearchHeuristic(state, problem=None):
     except:
         mahattanMin = 1000000000
 
+    count = 0
     for food in problem.foodPosition:
         mahattanAgent = util.manhattanDistance(state, food)
         if mahattanAgent < mahattanMin:
+            count += 1
             agentToFood.append(getMazeDistance(state, food, problem))
             mahattanMin = mahattanAgent
 
-        for food2 in problem.foodPosition:
-            if food != food2:
-                foodToFood.append(getMazeDistance(food, food2, problem))
+        # for food2 in problem.foodPosition:
+        #     if food != food2:
+        #         foodToFood.append(getMazeDistance(food, food2, problem))
 
-    return min(agentToFood)
+    agentToFood.sort()
+
+    return agentToFood[0] + agentToFood[len(agentToFood) - 1]
     # return 0
 
     # TODO 21
@@ -225,43 +229,6 @@ def aStarSearch(problem, heuristic=singleFoodSearchHeuristic):
                         newCost = problem.getCostOfActions(newAction) + heuristic(currentState, problem)
                         successorNode = successorState, newAction
                         frontier.update(successorNode, newCost)
-
-    return actions
-
-
-def bfs2(problem):
-    """Search the shallowest nodes in the search tree first."""
-
-    # to be explored (FIFO)
-    frontier = util.Queue()
-
-    # previously expanded states (for cycle checking), holds states
-    exploredNodes = []
-
-    startState = problem.getStartState()
-    startNode = (startState, [])  # (state, action, cost)
-
-    frontier.enqueue(startNode)
-
-    while not frontier.is_empty():
-        # begin exploring first (earliest-pushed) node on frontier
-        currentState, actions = frontier.dequeue()
-
-        if currentState not in exploredNodes:
-            # put popped node state into explored list
-            exploredNodes.append(currentState)
-
-            if problem.isGoalState(currentState):
-                return actions
-            else:
-                # list of (successor, action, stepCost)
-                successors = problem.getSuccessors(currentState)
-
-                for succState, succAction in successors:
-                    successorPath = actions + [succAction]
-
-                    succNode = (succState, successorPath)
-                    frontier.enqueue(succNode)
 
     return actions
 
