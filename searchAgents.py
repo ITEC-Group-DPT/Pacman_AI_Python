@@ -93,7 +93,7 @@ class AStarFoodSearchAgent(SearchAgent):
         self.problem = problems.SingleFoodSearchProblem
         self.algorithm = search.aStarSearch
 
-class AStarFoodSearchAgent(SearchAgent):
+class AStarMultiFoodSearchAgent(SearchAgent):
     def __init__(self):
         self.problem = problems.MultiFoodSearchProblem
         self.algorithm = search.aStarSearch

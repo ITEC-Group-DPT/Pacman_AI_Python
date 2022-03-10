@@ -156,12 +156,13 @@ class PriorityQueue:
         hq.heappush(self.items, (item, path, priority))
 
     def pop(self):
-        return hq.heappop(self.items)
+        popValue = hq.heappop(self.items)
+        return popValue
 
     def isEmpty(self):
         return len(self.items) == 0
 
-    def update(self, item, priority):
+    def update(self, item, path, priority):
         # If item already in priority queue with higher priority, 
         #                  update its priority and rebuild the heap.
         # If item already in priority queue with equal or lower priority, do nothing.
@@ -173,7 +174,7 @@ class PriorityQueue:
                 hq.heapify(self.items)
                 return
 
-        self.push(item, priority)
+        self.push(item, path, priority)
 
 class PriorityQueueWithFunction(PriorityQueue):
     '''
