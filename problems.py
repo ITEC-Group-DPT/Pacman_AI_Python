@@ -2,6 +2,7 @@ import util
 from game import Actions
 from game import Directions
 
+
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
@@ -47,9 +48,9 @@ class SearchProblem:
 
 class SingleFoodSearchProblem(SearchProblem):
     def __init__(self, startingGameState):
-     
+
         # pacman start (col,row bottom up)
-        self.start = startingGameState.getPacmanPosition()  
+        self.start = startingGameState.getPacmanPosition()
         self.wallGrid = startingGameState.getWalls()
         self.foodGrid = startingGameState.getFood()
         print(self.foodGrid)
@@ -57,14 +58,14 @@ class SingleFoodSearchProblem(SearchProblem):
         self.goal = None
         self.foodPosition = []
 
-        for col in range(self.foodGrid.width - 1 ):
+        for col in range(self.foodGrid.width - 1):
             for row in range(self.foodGrid.height - 1):
                 if self.foodGrid.data[col][row] == True:
-                    self.foodPosition.append((col,row))
+                    self.foodPosition.append((col, row))
                     break
-            
+
             if (len(self.foodPosition) == 1): break
-        
+
         pass
 
     def getStartState(self):
@@ -75,8 +76,8 @@ class SingleFoodSearchProblem(SearchProblem):
 
     def getSuccessors(self, state):
         successors = []
-        for action in [Directions.NORTH, Directions.EAST, Directions.WEST,Directions.SOUTH]:
-            x,y = state
+        for action in [Directions.NORTH, Directions.EAST, Directions.WEST, Directions.SOUTH]:
+            x, y = state
             dx, dy = Actions.directionToVector(action)
             neighborX, neighborY = int(x + dx), int(y + dy)
 
@@ -85,7 +86,6 @@ class SingleFoodSearchProblem(SearchProblem):
                 successors.append((nextState, action))
 
         return successors
-       
 
     def getCostOfActions(self, actions):
         print(len(actions))
@@ -94,7 +94,7 @@ class SingleFoodSearchProblem(SearchProblem):
 
 class MultiFoodSearchProblem(SearchProblem):
     def __init__(self, startingGameState):
-        self.start = startingGameState.getPacmanPosition() 
+        self.start = startingGameState.getPacmanPosition()
 
         self.wallGrid = startingGameState.getWalls()
 
@@ -105,11 +105,11 @@ class MultiFoodSearchProblem(SearchProblem):
 
         self.nodeDistance = {}
 
-        for col in range(self.foodGrid.width - 1 ):
+        for col in range(self.foodGrid.width - 1):
             for row in range(self.foodGrid.height - 1):
                 if self.foodGrid.data[col][row] == True:
-                    self.foodPosition.append((col,row))
-    
+                    self.foodPosition.append((col, row))
+
     def getStartState(self):
         return self.start
 
@@ -118,8 +118,8 @@ class MultiFoodSearchProblem(SearchProblem):
 
     def getSuccessors(self, state):
         successors = []
-        for action in [Directions.NORTH, Directions.EAST, Directions.WEST,Directions.SOUTH]:
-            x,y = state
+        for action in [Directions.NORTH, Directions.EAST, Directions.WEST, Directions.SOUTH]:
+            x, y = state
             dx, dy = Actions.directionToVector(action)
             neighborX, neighborY = int(x + dx), int(y + dy)
 
@@ -128,8 +128,6 @@ class MultiFoodSearchProblem(SearchProblem):
                 successors.append((nextState, action))
 
         return successors
-       
 
     def getCostOfActions(self, actions):
         return len(actions)
-

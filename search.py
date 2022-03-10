@@ -93,41 +93,51 @@ def multiFoodSearchHeuristic(state, problem=None):
     agentToFood = []
     foodToFood = [0]
 
+    try:
+        firstFood = problem.foodPosition[0]
+        mahattanMin = util.manhattanDistance(state, firstFood)
+
+        agentToFood.append(getMazeDistance(state, firstFood, problem))
+    except:
+        mahattanMin = 1000000000
+
     for food in problem.foodPosition:
-        agentToFood.append(getMazeDistance(state, food, problem))
+        mahattanAgent = util.manhattanDistance(state, food)
+        if mahattanAgent < mahattanMin:
+            agentToFood.append(getMazeDistance(state, food, problem))
+            mahattanMin = mahattanAgent
+
         for food2 in problem.foodPosition:
             if food != food2:
                 foodToFood.append(getMazeDistance(food, food2, problem))
 
-    return min(agentToFood) + max(foodToFood)
+    return min(agentToFood)
     # return 0
 
     # TODO 21
 
 
-def aStarSearch(problem, heuristic=nullHeuristic):
-
+def aStarSearch(problem, heuristic=singleFoodSearchHeuristic):
     n = len(problem.foodPosition)
+
+    if type(problem) == problems.MultiFoodSearchProblem:
+        heuristic = multiFoodSearchHeuristic
 
     path = []
     for i in range(n):
-        # singleFoodSearchHeuristic(problem.getStartState(), problem)
         frontier = util.PriorityQueue()
-        exploredNodes = []  # holds (state, cost)
+        exploredNodes = []
 
         startNode = (problem.getStartState(), path)
-        startNodeHeuristic = multiFoodSearchHeuristic(problem.getStartState(), problem)
+        startNodeHeuristic = heuristic(problem.getStartState(), problem)
 
         frontier.push(startNode, startNodeHeuristic)
 
         while not frontier.isEmpty():
             currentCost, (currentState, actions) = frontier.pop()
-
-            # currentNode = (currentState, currentCost)
             exploredNodes.append(currentState)  # put popped node into explored list
 
             if currentState in problem.foodPosition:
-                foodPos = problem.foodPosition
                 problem.foodPosition.remove(currentState)
                 problem.start = currentState
                 path = actions
@@ -136,11 +146,11 @@ def aStarSearch(problem, heuristic=nullHeuristic):
             if problem.isGoalState(currentState):
                 return actions
             else:
-                successors = problem.getSuccessors(currentState)  # list of (successor, action, stepCost)
+                successors = problem.getSuccessors(currentState)
                 for successorState, successorAction in successors:  # examine each successor
                     if successorState not in exploredNodes:
                         newAction = actions + [successorAction]
-                        newCost = problem.getCostOfActions(newAction) + multiFoodSearchHeuristic(currentState, problem)
+                        newCost = problem.getCostOfActions(newAction) + heuristic(currentState, problem)
                         successorNode = successorState, newAction
                         frontier.update(successorNode, newCost)
 
