@@ -162,30 +162,71 @@ def multiFoodSearchHeuristic(state, problem=None):
     A heuristic function for the problem of multi-food search
     """
     agentToFood = []
-    foodToFood = []
+    foodToFood = [0]
+
+    try:
+        firstFood = problem.foodPosition[0]
+        mahattanMin = util.manhattanDistance(state, firstFood)
+
+        agentToFood.append(getMazeDistance(state, firstFood, problem))
+    except:
+        mahattanMin = 1000000000
 
     for food in problem.foodPosition:
-        agentToFood.append(getMazeDistance(state, food, problem))
+        mahattanAgent = util.manhattanDistance(state, food)
+        if mahattanAgent < mahattanMin:
+            agentToFood.append(getMazeDistance(state, food, problem))
+            mahattanMin = mahattanAgent
+
         for food2 in problem.foodPosition:
             if food != food2:
                 foodToFood.append(getMazeDistance(food, food2, problem))
 
-    return min(agentToFood) + max(foodToFood)
+    return min(agentToFood)
+    # return 0
 
     # TODO 21
 
 
-def aStarSearch(problem, heuristic=nullHeuristic):
-    # singleFoodSearchHeuristic(problem.getStartState(), problem)
+def aStarSearch(problem, heuristic=singleFoodSearchHeuristic):
+    n = len(problem.foodPosition)
 
-    # truyen vao toa do cua pacman hien tai
-    startNodeHeuristic = multiFoodSearchHeuristic(problem.getStartState(), problem)
-    """
-    return a path to the goal
-    """
+    if type(problem) == problems.MultiFoodSearchProblem:
+        heuristic = multiFoodSearchHeuristic
 
-    pass
-    # TODO 22
+    path = []
+    for i in range(n):
+        frontier = util.PriorityQueue()
+        exploredNodes = []
+
+        startNode = (problem.getStartState(), path)
+        startNodeHeuristic = heuristic(problem.getStartState(), problem)
+
+        frontier.push(startNode, startNodeHeuristic)
+
+        while not frontier.isEmpty():
+            currentCost, (currentState, actions) = frontier.pop()
+            exploredNodes.append(currentState)  # put popped node into explored list
+
+            if problem.isGoalState(currentState):
+                return actions
+
+            if currentState in problem.foodPosition:
+                problem.foodPosition.remove(currentState)
+                problem.start = currentState
+                path = actions
+                break
+
+            else:
+                successors = problem.getSuccessors(currentState)
+                for successorState, successorAction in successors:  # examine each successor
+                    if successorState not in exploredNodes:
+                        newAction = actions + [successorAction]
+                        newCost = problem.getCostOfActions(newAction) + heuristic(currentState, problem)
+                        successorNode = successorState, newAction
+                        frontier.update(successorNode, newCost)
+
+    return actions
 
 
 def bfs2(problem):

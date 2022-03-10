@@ -88,7 +88,7 @@ class UCSFoodSearchAgent(SearchAgent):
         self.algorithm = search.uniformCostSearch
 
 
-class AStarFoodSearchAgent(SearchAgent):
+class AStarSingleFoodSearchAgent(SearchAgent):
     def __init__(self):
         self.problem = problems.SingleFoodSearchProblem
         self.algorithm = search.aStarSearch

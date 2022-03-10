@@ -2,7 +2,6 @@ import inspect
 import random
 import sys
 import heapq as hq
-
 import signa as signa
 
 
@@ -166,7 +165,7 @@ class PriorityQueue:
         return len(self.items) == 0
 
     def update(self, item, priority):
-        # If item already in priority queue with higher priority, 
+        # If item already in priority queue with higher priority,
         #                  update its priority and rebuild the heap.
         # If item already in priority queue with equal or lower priority, do nothing.
         # If item not in priority queue, do the same thing as self.push.
