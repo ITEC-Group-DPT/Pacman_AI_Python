@@ -161,7 +161,7 @@ class PriorityQueue:
     def pop(self):
         return hq.heappop(self.items)
 
-    def isEmpty(self):
+    def is_empty(self):
         return len(self.items) == 0
 
     def update(self, item, priority):

@@ -14,130 +14,58 @@ w = Directions.WEST
 
 
 def depthFirstSearch(problem):
-    paths = []
+    stack = util.Stack()
+    visitedNodes = []
 
-    for i in range(len(problem.foodPosition)):
-        stack = util.Stack()
-        visitedNodes = []
-        startNode = (problem.getStartState(), paths)
-        stack.push(startNode)
+    startNode = (problem.getStartState(), [])
+    stack.push(startNode)
 
-        while not stack.is_empty():
-            currentState, paths = stack.pop()
-            visitedNodes.append(currentState)
+    while not stack.is_empty():
+        curState, paths = stack.pop()
 
-            if problem.isGoalState(currentState):
-                problem.start = currentState
-                problem.foodPosition.remove(currentState)
-                break
+        if curState not in visitedNodes:
+            visitedNodes.append(curState)
 
-            if problem.isGoalState(currentState):
+            if problem.isGoalState(curState):
                 return paths
 
-            successors = problem.getSuccessors(currentState)
+            successors = problem.getSuccessors(curState)
+
             for successorState, successorAction in successors:
-                if successorState not in visitedNodes:
-                    successorPath = paths + [successorAction]
-                    stack.push((successorState, successorPath))
-                else:
-                    # happens when all nodes have been traversed
-                    # update the new start node as the current state
-                    # if you don't update, the next for loop will use the previous starting node
-                    # therefore high chance of leading to illegal actions
-                    problem.start = currentState
+                successorPath = paths + [successorAction]
+                stack.push((successorState, successorPath))
+
     return paths
 
 
 def breadthFirstSearch(problem):
-    """
-    return a path to the goal
-    """
-    """Search the shallowest nodes in the search tree first."""
-    # startState = problem.getStartState()
+    queue = util.Queue()
+    visitedNodes = []
 
-    # #to be explored (FIFO)
-    paths = []
+    startNode = (problem.getStartState(), [])
+    queue.enqueue(startNode)
 
-    for i in range(len(problem.foodPosition)):
-        queue = util.Queue()
-        visitedNodes = []
-        startNode = (problem.getStartState(), paths)
-        queue.enqueue(startNode)
+    while not queue.is_empty():
+        curState, paths = queue.dequeue()
+        if curState not in visitedNodes:
+            visitedNodes.append(curState)
 
-        while not queue.is_empty():
-            currentState, paths = queue.dequeue()
-            visitedNodes.append(currentState)
-
-            if currentState in problem.foodPosition:
-                problem.start = currentState
-                problem.foodPosition.remove(currentState)
-                break
-
-            if problem.isGoalState(currentState):
+            if problem.isGoalState(curState):
                 return paths
 
-            successors = problem.getSuccessors(currentState)
+            successors = problem.getSuccessors(curState)
+
             for successorState, successorAction in successors:
-                if successorState not in visitedNodes:
-                    successorPath = paths + [successorAction]
-                    queue.enqueue((successorState, successorPath))
-                else:
-                    # happens when all nodes have been traversed
-                    # update the new start node as the current state
-                    # if you don't update, the next for loop will use the previous starting node
-                    # therefore high chance of leading to illegal actions
-                    problem.start = currentState
+                successorPath = paths + [successorAction]
+                queue.enqueue((successorState, successorPath))
 
     return paths
 
 
 # same implementation as BFS because all successors' cost are the same
 def uniformCostSearch(problem):
-    """
-    return a path to the goal
-    """
-    # TODO 19
 
-    paths = []  # list of actions from initial state
-
-    for i in range(len(problem.foodPosition)):
-        pQueue = util.PriorityQueue()
-        visitedNodes = []
-        # a state is a position (x, y)
-        # a node contains its state (position) and the path from initial node
-        # assign the starting node with its position and paths from initial node
-        startNode = (problem.getStartState(), paths)
-        pQueue.push(startNode, 0)  # push it into the priority queue
-
-        while not pQueue.isEmpty():  # loop until pQueue is empty
-            # unpack the popped node, totalCost is the total cost from initial state to current state
-            totalCost, (currentState, paths) = pQueue.pop()
-            visitedNodes.append(currentState)  # mark the current state (x,y) as visited
-
-            if currentState in problem.foodPosition:  # check whether the current state (x,y) is food state
-                problem.start = currentState  # assign the new starting state as current state
-                problem.foodPosition.remove(currentState)  # remove the food from the food list (already eaten)
-                break  # start UCS again with new starting node as the current food position
-
-            if problem.isGoalState(currentState):
-                return paths
-
-            successors = problem.getSuccessors(currentState)  # get current node's successors
-            for successorState, successorAction in successors:  # for each successor
-                if successorState not in visitedNodes:  # check whether successor is visited
-                    successorPath = paths + [successorAction]  # add current path with a new successor's actions
-                    successorNode = (successorState, successorPath)  # new successor node
-
-                    newTotalCost = totalCost + 1  # in pacman, every successor has a cost of 1
-                    pQueue.update(successorNode, newTotalCost)  # push the new successor in pQueue
-                else:
-                    # happens when all nodes have been traversed
-                    # update the new start node as the current state
-                    # if you don't update, the next for loop will use the previous starting node
-                    # therefore high chance of leading to illegal actions
-                    problem.start = currentState
-
-    return paths
+    pass
 
 
 def nullHeuristic(state, problem=None):

@@ -1,7 +1,7 @@
 import util
 from game import Actions
 from game import Directions
-
+import copy
 
 class SearchProblem:
     """
@@ -107,21 +107,32 @@ class MultiFoodSearchProblem(SearchProblem):
                     self.foodPosition.append((col, row))
 
     def getStartState(self):
-        return self.start
+        return self.start, self.foodPosition
 
     def isGoalState(self, state):
-        return self.goal is not None and state == self.goal
-
+        return len(state[1]) == 0 # no food left
 
     def getSuccessors(self, state):
         successors = []
         for action in [Directions.NORTH, Directions.EAST, Directions.WEST, Directions.SOUTH]:
-            x, y = state
+
+            coordinate, foodPosition = state
+
+            x, y = coordinate
             dx, dy = Actions.directionToVector(action)
+
             neighborX, neighborY = int(x + dx), int(y + dy)
 
+            newCoordinate = (neighborX, neighborY)
             if self.wallGrid[neighborX][neighborY] == False:
-                nextState = (neighborX, neighborY)
+
+                newFoodPosition = copy.deepcopy(foodPosition)
+
+                if newCoordinate in foodPosition:
+                    newFoodPosition.remove(newCoordinate)
+
+                nextState = (newCoordinate, newFoodPosition)
+
                 successors.append((nextState, action))
 
         return successors
