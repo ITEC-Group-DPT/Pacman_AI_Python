@@ -98,8 +98,9 @@ def multiFoodSearchHeuristic(state, problem=None):
         for food2 in problem.foodPosition:
             if food != food2:
                 foodToFood.append(getMazeDistance(food, food2, problem))
-    return 0
-    # return min(agentToFood) + max(foodToFood)
+
+    return min(agentToFood) + max(foodToFood)
+    # return 0
 
     # TODO 21
 
@@ -113,20 +114,17 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         # singleFoodSearchHeuristic(problem.getStartState(), problem)
         frontier = util.PriorityQueue()
         exploredNodes = []  # holds (state, cost)
-        startState = problem.getStartState()
-        startNodeHeuristic = multiFoodSearchHeuristic(startState, problem)
-        frontier.push(startState, path, startNodeHeuristic)
+
+        startNode = (problem.getStartState(), path)
+        startNodeHeuristic = multiFoodSearchHeuristic(problem.getStartState(), problem)
+
+        frontier.push(startNode, startNodeHeuristic)
 
         while not frontier.isEmpty():
-            hehe = frontier.pop()
+            currentCost, (currentState, actions) = frontier.pop()
 
-            currentState, actions, currentCost = hehe
-            # currentState = hehe[0]
-            # actions = hehe[1]
-            # currentCost = hehe[2]
-
-            currentNode = (currentState, currentCost)
-            exploredNodes.append(currentNode)  # put popped node into explored list
+            # currentNode = (currentState, currentCost)
+            exploredNodes.append(currentState)  # put popped node into explored list
 
             if currentState in problem.foodPosition:
                 foodPos = problem.foodPosition
@@ -139,18 +137,12 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 return actions
             else:
                 successors = problem.getSuccessors(currentState)  # list of (successor, action, stepCost)
-                for succState, succAction in successors:  # examine each successor
-                    newAction = actions + [succAction]
-                    newCost = problem.getCostOfActions(newAction)
-                    already_explored = False  # check if this successor has been explored
-
-                    for explored in exploredNodes:  # examine each explored node tuple
-                        exploredState, exploredCost = explored
-                        if succState == exploredState: #and (newCost >= exploredCost):
-                            already_explored = True
-
-                    if not already_explored:  # if this successor not explored, put on frontier and explored list
-                        frontier.update(succState, newAction, newCost + multiFoodSearchHeuristic(succState, problem))
+                for successorState, successorAction in successors:  # examine each successor
+                    if successorState not in exploredNodes:
+                        newAction = actions + [successorAction]
+                        newCost = problem.getCostOfActions(newAction) + multiFoodSearchHeuristic(currentState, problem)
+                        successorNode = successorState, newAction
+                        frontier.update(successorNode, newCost)
 
     return actions
 
