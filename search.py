@@ -13,36 +13,37 @@ w = Directions.WEST
 
 
 def depthFirstSearch(problem):
-
     paths = []
     
-    while (len(problem.foodPosition) != 0):
+    for i in range(len(problem.foodPosition)):
         stack = util.Stack()
         visitedNodes = []   
-        start = (problem.getStartState(), paths)
+        startNode = (problem.getStartState(), paths)
+        stack.push(startNode)
 
-        stack.push(start)
-
-        while stack.is_empty() == False:
-
+        while not stack.is_empty():
             currentState, paths = stack.pop()
+            visitedNodes.append(currentState)
 
-            if currentState not in visitedNodes:
-                visitedNodes.append(currentState)
-                if problem.isGoalState(currentState):
-                    problem.start = currentState
-                    problem.foodPosition.remove(currentState)
-                    break
+            if problem.isGoalState(currentState):
+                problem.start = currentState
+                problem.foodPosition.remove(currentState)
+                break
+
+            if problem.isGoalState(currentState):
+                return paths
+
+            successors = problem.getSuccessors(currentState)
+            for successorState, successorAction in successors:
+                if successorState not in visitedNodes:
+                    successorPath = paths + [successorAction]
+                    stack.push((successorState, successorPath))
                 else:
-                    
-                    successors = problem.getSuccessors(currentState)
-
-                    for successorState, successorAction in successors:
-                        successorPath = paths + [successorAction]
-
-                        stack.push((successorState,successorPath))
-        if stack.is_empty(): 
-            problem.foodPosition.pop(0)
+                    # happens when all nodes have been traversed
+                    # update the new start node as the current state
+                    # if you don't update, the next for loop will use the previous starting node
+                    # therefore high chance of leading to illegal actions
+                    problem.start = currentState
     return paths
 
 
