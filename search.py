@@ -105,16 +105,36 @@ def multiFoodSearchHeuristic(state, problem=None):
 
 
 def aStarSearch(problem, heuristic=nullHeuristic):
+    
     # singleFoodSearchHeuristic(problem.getStartState(), problem)
+    frontier = util.PriorityQueue()
+    exploredNodes = [] #holds (state, cost)
+    startState = problem.getStartState()
+    startNodeHeuristic = multiFoodSearchHeuristic(startState, problem)  # truyen vao toa do cua pacman hien tai
+    frontier.push(startState, [], startNodeHeuristic)
+    while not frontier.isEmpty():
+        currentState, actions, currentCost = frontier.pop()
+        currentNode = (currentState, currentCost)
+        exploredNodes.append(currentNode) # put popped node into explored list
+        if problem.isGoalState(currentState):
+            return actions
+        else:
+            successors = problem.getSuccessors(currentState) #list of (successor, action, stepCost)
+            for succState, succAction in successors: #examine each successor
+                newAction = actions + [succAction]
+                newCost = problem.getCostOfActions(newAction)
+                already_explored = False #check if this successor has been explored
+                for explored in exploredNodes: #examine each explored node tuple
+                    exploredState, exploredCost = explored
+                    if (succState == exploredState) and (newCost >= exploredCost):
+                        already_explored = True
+                if not already_explored:   #if this successor not explored, put on frontier and explored list
+                    print('1111',succState)
+                    print('22222',newAction)
+                    frontier.push(succState, newAction, newCost + multiFoodSearchHeuristic(succState, problem))
+                    exploredNodes.append((succState, newCost))
 
-    # truyen vao toa do cua pacman hien tai
-    startNodeHeuristic = multiFoodSearchHeuristic(problem.getStartState(), problem)
-    """
-    return a path to the goal
-    """
-
-    pass
-    # TODO 22
+    return actions
 
 
 def bfs2(problem):

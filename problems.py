@@ -131,5 +131,5 @@ class MultiFoodSearchProblem(SearchProblem):
        
 
     def getCostOfActions(self, actions):
-        print(len(actions))
+        return len(actions)
 

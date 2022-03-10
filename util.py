@@ -1,7 +1,7 @@
 import inspect
 import random
 import sys
-
+import heapq as hq
 import signa as signa
 
 
@@ -152,8 +152,8 @@ class PriorityQueue:
     def  __init__(self):
         self.items = []
 
-    def push(self, item, priority):
-        hq.heappush(self.items, (priority, item))
+    def push(self, item, path, priority):
+        hq.heappush(self.items, (item, path, priority))
 
     def pop(self):
         return hq.heappop(self.items)
