@@ -62,9 +62,6 @@ class SingleFoodSearchProblem(SearchProblem):
             for row in range(self.foodGrid.height - 1):
                 if self.foodGrid.data[col][row] == True:
                     self.foodPosition.append((col, row))
-                    break
-
-            if (len(self.foodPosition) == 1): break
 
         pass
 
@@ -88,8 +85,7 @@ class SingleFoodSearchProblem(SearchProblem):
         return successors
 
     def getCostOfActions(self, actions):
-        print(len(actions))
-        pass
+        return len(actions)
 
 
 class MultiFoodSearchProblem(SearchProblem):

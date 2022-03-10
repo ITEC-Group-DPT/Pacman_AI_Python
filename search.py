@@ -137,14 +137,15 @@ def aStarSearch(problem, heuristic=singleFoodSearchHeuristic):
             currentCost, (currentState, actions) = frontier.pop()
             exploredNodes.append(currentState)  # put popped node into explored list
 
+            if problem.isGoalState(currentState):
+                return actions
+
             if currentState in problem.foodPosition:
                 problem.foodPosition.remove(currentState)
                 problem.start = currentState
                 path = actions
                 break
 
-            if problem.isGoalState(currentState):
-                return actions
             else:
                 successors = problem.getSuccessors(currentState)
                 for successorState, successorAction in successors:  # examine each successor
