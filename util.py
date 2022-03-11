@@ -107,52 +107,57 @@ class FixedRandom:
 
 
 class Stack:
-    def  __init__(self):
+    def __init__(self):
         self.items = []
 
     def push(self, item):
         self.items.append(item)
-    
-    def pop(self): # remove item args
+
+    def pop(self):  # remove item args
         if self.is_empty():
             return None
         else:
             return self.items.pop()
 
-    def size(self): # copy size def
+    def size(self):  # copy size def
         return len(self.items)
 
     def is_empty(self):
         return self.size() == 0
 
+
 class Queue:
     def __init__(self):
         self.data = []
+
     def enqueue(self, e):
         self.data.append(e)
+
     def dequeue(self):
         if self.is_empty():
             return None
         return self.data.pop(0)
+
     def size(self):
         return len(self.data)
+
     def front(self):
         if self.is_empty():
             return None
         else:
             return self.data[0]
+
     def back(self):
         if self.is_empty():
             return None
         return self.data[-1]
+
     def is_empty(self):
         return self.size() == 0
 
-    
-
 
 class PriorityQueue:
-    def  __init__(self):
+    def __init__(self):
         self.items = []
 
     def push(self, item, priority):
@@ -177,6 +182,7 @@ class PriorityQueue:
                 return
 
         self.push(item, priority)
+
 
 class PriorityQueueWithFunction(PriorityQueue):
     '''

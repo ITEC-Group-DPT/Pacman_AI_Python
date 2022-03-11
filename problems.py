@@ -3,6 +3,7 @@ from game import Actions
 from game import Directions
 import copy
 
+
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
@@ -53,7 +54,6 @@ class SingleFoodSearchProblem(SearchProblem):
         self.start = startingGameState.getPacmanPosition()
         self.wallGrid = startingGameState.getWalls()
         self.foodGrid = startingGameState.getFood()
-        print(self.foodGrid)
 
         self.goal = None
         self.foodPosition = []
@@ -66,20 +66,32 @@ class SingleFoodSearchProblem(SearchProblem):
         pass
 
     def getStartState(self):
-        return self.start
+        return self.start, self.foodPosition
 
     def isGoalState(self, state):
-        return state in self.foodPosition
+        return len(state[1]) == len(self.foodPosition) - 1
 
     def getSuccessors(self, state):
         successors = []
         for action in [Directions.NORTH, Directions.EAST, Directions.WEST, Directions.SOUTH]:
-            x, y = state
+
+            coordinate, foodPosition = state
+
+            x, y = coordinate
             dx, dy = Actions.directionToVector(action)
+
             neighborX, neighborY = int(x + dx), int(y + dy)
 
+            newCoordinate = (neighborX, neighborY)
             if self.wallGrid[neighborX][neighborY] == False:
-                nextState = (neighborX, neighborY)
+
+                newFoodPosition = copy.deepcopy(foodPosition)
+
+                if newCoordinate in foodPosition:
+                    newFoodPosition.remove(newCoordinate)
+
+                nextState = (newCoordinate, newFoodPosition)
+
                 successors.append((nextState, action))
 
         return successors
@@ -110,7 +122,9 @@ class MultiFoodSearchProblem(SearchProblem):
         return self.start, self.foodPosition
 
     def isGoalState(self, state):
-        return len(state[1]) == 0 # no food left
+        if self.goal is not None:
+            return state[0] == self.goal
+        return len(state[1]) == 0  # no food left
 
     def getSuccessors(self, state):
         successors = []

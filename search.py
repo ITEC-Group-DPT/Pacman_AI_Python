@@ -71,6 +71,7 @@ def breadthFirstSearch(problem):
                 successorPath = paths + [successorAction]
 
                 if problem.isGoalState(successorState):
+                    print("true ?")
                     return successorPath
 
                 queue.enqueue((successorState, successorPath))
@@ -128,88 +129,92 @@ def nullHeuristic(state, problem=None):
 
 
 def singleFoodSearchHeuristic(state, problem=None):
-    """
-    A heuristic function for the problem of single food search
-    """
-    return util.manhattanDistance(state, problem.foodPosition[0])
-    # TODO 20
-    pass
+    if len(state[1]) == 0:
+        return 0
+    return util.manhattanDistance(state[0], state[1][0])
 
 
-def multiFoodSearchHeuristic(state, problem=None):
+def multiFoodSearchHeuristic(state, problem):
     """
     A heuristic function for the problem of multi-food search
     """
     agentToFood = []
-    foodToFood = [0]
+    foodToFood = []
 
-    try:
-        firstFood = problem.foodPosition[0]
-        mahattanMin = util.manhattanDistance(state, firstFood)
+    coordinate, foodPosition = state
 
-        agentToFood.append(getMazeDistance(state, firstFood, problem))
-    except:
-        mahattanMin = 1000000000
+    if len(foodPosition) == 0:
+        return 0
 
-    count = 0
-    for food in problem.foodPosition:
-        mahattanAgent = util.manhattanDistance(state, food)
-        if mahattanAgent < mahattanMin:
-            count += 1
-            agentToFood.append(getMazeDistance(state, food, problem))
-            mahattanMin = mahattanAgent
+    for food in foodPosition:
+        agentToFood.append((util.manhattanDistance(coordinate, food), food))
+        for food2 in foodPosition:
+            foodToFood.append((util.manhattanDistance(food, food2), (food, food2)))
 
-        # for food2 in problem.foodPosition:
-        #     if food != food2:
-        #         foodToFood.append(getMazeDistance(food, food2, problem))
+    mahattanMin = min(agentToFood)[1]
+    mahattanMax = max(foodToFood)[1]
 
-    agentToFood.sort()
+    closestFood = getMazeDistance(coordinate, mahattanMin, problem)
+    furthestFood = getMazeDistance(mahattanMax[0], mahattanMax[1], problem)
 
-    return agentToFood[0] + agentToFood[len(agentToFood) - 1]
-    # return 0
+    return closestFood + furthestFood
 
     # TODO 21
 
 
 def aStarSearch(problem, heuristic=singleFoodSearchHeuristic):
-    n = len(problem.foodPosition)
-
     if type(problem) == problems.MultiFoodSearchProblem:
         heuristic = multiFoodSearchHeuristic
 
-    path = []
-    for i in range(n):
-        frontier = util.PriorityQueue()
-        exploredNodes = []
+    frontier = util.PriorityQueue()
+    visitedNodes = defaultdict()
 
-        startNode = (problem.getStartState(), path)
-        startNodeHeuristic = heuristic(problem.getStartState(), problem)
+    count = 0
+    startNode = (problem.getStartState(), [])
+    frontier.push(startNode, 0)
 
-        frontier.push(startNode, startNodeHeuristic)
+    while not frontier.is_empty():
+        curCost, curNode = frontier.pop()
+        (curState, curPath) = curNode
 
-        while not frontier.isEmpty():
-            currentCost, (currentState, actions) = frontier.pop()
-            exploredNodes.append(currentState)  # put popped node into explored list
+        curCoordinate, curFoodPosition = curState
+        try:
+            visitedNodes[curCoordinate]
+        except:
+            visitedNodes.setdefault(curCoordinate, [])
 
-            if problem.isGoalState(currentState):
-                return actions
+        if curFoodPosition not in visitedNodes[curCoordinate]:
 
-            if currentState in problem.foodPosition:
-                problem.foodPosition.remove(currentState)
-                problem.start = currentState
-                path = actions
-                break
+            if len(visitedNodes[curCoordinate]) > 0:
+                minFoodRemain = min(map(len, visitedNodes[curCoordinate]))
 
-            else:
-                successors = problem.getSuccessors(currentState)
-                for successorState, successorAction in successors:  # examine each successor
-                    if successorState not in exploredNodes:
-                        newAction = actions + [successorAction]
-                        newCost = problem.getCostOfActions(newAction) + heuristic(currentState, problem)
-                        successorNode = successorState, newAction
-                        frontier.update(successorNode, newCost)
+                if len(curFoodPosition) > minFoodRemain:
+                    continue
 
-    return actions
+            visitedNodes[curState[0]].append(curState[1])
+
+            if problem.isGoalState(curState):
+                print("maze run: ", count * 2)
+                return curPath
+
+            successors = problem.getSuccessors(curState)
+
+            for successorState, successorAction in successors:
+                visitedNodes.setdefault(successorState[0], [])
+                try:
+                    minFoodSuccessor = min(map(len, visitedNodes[successorState[0]]))
+                except:
+                    minFoodSuccessor = 10000
+
+                if successorState[1] not in visitedNodes[successorState[0]] and (
+                        len(successorState[1]) < minFoodSuccessor):
+                    successorPath = curPath + [successorAction]
+                    count += 1
+                    successorCost = len(successorPath) + heuristic(successorState, problem)
+
+                    frontier.update((successorState, successorPath), successorCost)
+
+    return curPath
 
 
 def getMazeDistance(start, end, problem):
@@ -217,6 +222,7 @@ def getMazeDistance(start, end, problem):
         return problem.nodeDistance[(start, end)] or problem.nodeDistance[(end, start)]
     except:
         posProblem = copy.deepcopy(problem)
+        posProblem.start = start
         posProblem.goal = end
 
         distance = problem.nodeDistance[(start, end)] = len(bfs(posProblem))
