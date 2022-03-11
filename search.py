@@ -158,12 +158,12 @@ def multiFoodSearchHeuristic(state, problem):
     for food in foodPosition:
         foodToFood.append(util.manhattanDistance(coordinateMin, food))
 
-    mahattanMax = min(foodToFood)
+    mìnFoodDistance = min(foodToFood)
 
     # closestFood = getMazeDistance(coordinate, mahattanMin, problem)
     # furthestFood = getMazeDistance(mahattanMax[0], mahattanMax[1], problem)
 
-    return mahattanMin + (len(foodPosition) - 1) * mahattanMax
+    return mahattanMin + (len(foodPosition) - 1) * mìnFoodDistance
 
     # TODO 21
 
