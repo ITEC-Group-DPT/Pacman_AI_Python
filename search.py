@@ -46,8 +46,10 @@ def breadthFirstSearch(problem):
     startNode = (problem.getStartState(), [])
     queue.enqueue(startNode)
 
+    count = 0
     while not queue.is_empty():
         curState, paths = queue.dequeue()
+        count += 1
 
         curCoordinate, curFoodPosition = curState
         try:
@@ -57,7 +59,7 @@ def breadthFirstSearch(problem):
 
         if curFoodPosition not in visitedNodes[curCoordinate]:
 
-            if len(visitedNodes[curCoordinate]) > 0:
+            if len(visitedNodes[curCoordinate]) > 0 and count > 10000:
                 minFoodRemain = min(map(len, visitedNodes[curCoordinate]))
 
                 if len(curFoodPosition) > minFoodRemain:
@@ -71,7 +73,6 @@ def breadthFirstSearch(problem):
                 successorPath = paths + [successorAction]
 
                 if problem.isGoalState(successorState):
-                    print("true ?")
                     return successorPath
 
                 queue.enqueue((successorState, successorPath))
@@ -86,7 +87,10 @@ def uniformCostSearch(problem):
     startNode = (problem.getStartState(), [])
     frontier.push(startNode, 0)
 
+    count = 0
+
     while not frontier.is_empty():
+        count += 1
         curCost, curNode = frontier.pop()
         (curState, curPath) = curNode
 
@@ -98,7 +102,7 @@ def uniformCostSearch(problem):
 
         if curFoodPosition not in visitedNodes[curCoordinate]:
 
-            if len(visitedNodes[curCoordinate]) > 0:
+            if len(visitedNodes[curCoordinate]) > 0 and count > 10000:
                 minFoodRemain = min(map(len, visitedNodes[curCoordinate]))
 
                 if len(curFoodPosition) > minFoodRemain:
@@ -148,16 +152,18 @@ def multiFoodSearchHeuristic(state, problem):
 
     for food in foodPosition:
         agentToFood.append((util.manhattanDistance(coordinate, food), food))
-        for food2 in foodPosition:
-            foodToFood.append((util.manhattanDistance(food, food2), (food, food2)))
 
-    mahattanMin = min(agentToFood)[1]
-    mahattanMax = max(foodToFood)[1]
+    mahattanMin, coordinateMin = min(agentToFood)
 
-    closestFood = getMazeDistance(coordinate, mahattanMin, problem)
-    furthestFood = getMazeDistance(mahattanMax[0], mahattanMax[1], problem)
+    for food in foodPosition:
+        foodToFood.append(util.manhattanDistance(coordinateMin, food))
 
-    return closestFood + furthestFood
+    mahattanMax = min(foodToFood)
+
+    # closestFood = getMazeDistance(coordinate, mahattanMin, problem)
+    # furthestFood = getMazeDistance(mahattanMax[0], mahattanMax[1], problem)
+
+    return mahattanMin + (len(foodPosition) - 1) * mahattanMax
 
     # TODO 21
 
@@ -174,6 +180,8 @@ def aStarSearch(problem, heuristic=singleFoodSearchHeuristic):
     frontier.push(startNode, 0)
 
     while not frontier.is_empty():
+        count += 1
+
         curCost, curNode = frontier.pop()
         (curState, curPath) = curNode
 
@@ -185,7 +193,7 @@ def aStarSearch(problem, heuristic=singleFoodSearchHeuristic):
 
         if curFoodPosition not in visitedNodes[curCoordinate]:
 
-            if len(visitedNodes[curCoordinate]) > 0:
+            if len(visitedNodes[curCoordinate]) > 0 and count >= 25000:
                 minFoodRemain = min(map(len, visitedNodes[curCoordinate]))
 
                 if len(curFoodPosition) > minFoodRemain:
@@ -194,20 +202,14 @@ def aStarSearch(problem, heuristic=singleFoodSearchHeuristic):
             visitedNodes[curState[0]].append(curState[1])
 
             if problem.isGoalState(curState):
-                print("maze run: ", count * 2)
                 return curPath
 
             successors = problem.getSuccessors(curState)
 
             for successorState, successorAction in successors:
                 visitedNodes.setdefault(successorState[0], [])
-                try:
-                    minFoodSuccessor = min(map(len, visitedNodes[successorState[0]]))
-                except:
-                    minFoodSuccessor = 10000
 
-                if successorState[1] not in visitedNodes[successorState[0]] and (
-                        len(successorState[1]) < minFoodSuccessor):
+                if successorState[1] not in visitedNodes[successorState[0]]:
                     successorPath = curPath + [successorAction]
                     count += 1
                     successorCost = len(successorPath) + heuristic(successorState, problem)
