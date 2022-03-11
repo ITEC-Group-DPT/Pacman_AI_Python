@@ -53,7 +53,6 @@ class SingleFoodSearchProblem(SearchProblem):
         self.start = startingGameState.getPacmanPosition()
         self.wallGrid = startingGameState.getWalls()
         self.foodGrid = startingGameState.getFood()
-        print(self.foodGrid)
 
         self.goal = None
         self.foodPosition = []
@@ -69,7 +68,7 @@ class SingleFoodSearchProblem(SearchProblem):
         return self.start
 
     def isGoalState(self, state):
-        return state in self.foodPosition
+        return len(self.foodPosition) + 1 == self.foodGrid.count()
 
     def getSuccessors(self, state):
         successors = []
@@ -110,7 +109,9 @@ class MultiFoodSearchProblem(SearchProblem):
         return self.start
 
     def isGoalState(self, state):
-        return self.goal is not None and state == self.goal
+        if self.goal is not None:
+            return self.goal
+        return len(self.foodPosition) == 0
 
 
     def getSuccessors(self, state):

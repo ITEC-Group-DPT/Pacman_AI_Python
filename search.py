@@ -16,6 +16,8 @@ w = Directions.WEST
 def depthFirstSearch(problem):
     paths = []
 
+    count = 0
+
     while len(problem.foodPosition) != 0:
         stack = util.Stack()
         visitedNodes = []
@@ -26,7 +28,10 @@ def depthFirstSearch(problem):
         while not stack.is_empty():
 
             currentState, paths = stack.pop()
+            count += 1
 
+            if currentState in visitedNodes:
+                continue
             visitedNodes.append(currentState)
 
             successors = problem.getSuccessors(currentState)
@@ -34,59 +39,74 @@ def depthFirstSearch(problem):
             for successorState, successorAction in successors:
                 successorPath = paths + [successorAction]
 
-                if currentState in problem.foodPosition:
-                    problem.start = currentState
-                    problem.foodPosition.remove(currentState)
+                if successorState in problem.foodPosition:
+                    problem.start = successorState
+                    problem.foodPosition.remove(successorState)
 
                     if problem.isGoalState(successorState):
+                        print("Visited Nodes: ", count)
                         print("Total Cost: ", len(successorPath))
                         return successorPath
                     stack.items = []
+                    paths = successorPath
+                    break
 
                 if successorState not in visitedNodes:
                     stack.push((successorState, successorPath))
 
+    print("Visited Nodes: ", count)
     print("Total Cost: ", len(paths))
     return paths
 
 
 def breadthFirstSearch(problem):
-    # startState = problem.getStartState()
+    BFSpaths = []
 
-    # #to be explored (FIFO)
-    paths = []
+    count = 0
 
     while len(problem.foodPosition) != 0:
         queue = util.Queue()
         visitedNodes = []
-        start = (problem.getStartState(), paths)
+        start = (problem.getStartState(), BFSpaths)
 
         queue.enqueue(start)
 
         while not queue.is_empty():
-            currentState, paths = queue.dequeue()
-            visitedNodes.append(currentState)
 
+            hehe = queue.dequeue()
+            currentState = hehe[0]
+            BFSpaths = hehe[1]
+
+            count += 1
+
+            if currentState in visitedNodes:
+                continue
             visitedNodes.append(currentState)
-            if currentState in problem.foodPosition:
-                problem.start = currentState
-                problem.foodPosition.remove(currentState)
-                break
 
             successors = problem.getSuccessors(currentState)
 
             for successorState, successorAction in successors:
-                successorPath = paths + [successorAction]
+                successorPath = BFSpaths + [successorAction]
 
-                if problem.isGoalState(successorState):
-                    print("Total Cost: ", len(successorPath))
-                    return successorPath
+                if successorState in problem.foodPosition:
+                    problem.start = successorState
+                    problem.foodPosition.remove(successorState)
+
+                    if problem.isGoalState(successorState):
+                        print("Visited Nodes: ", count)
+                        print("Total Cost: ", len(successorPath))
+                        return successorPath
+
+                    queue.data = []
+                    BFSpaths = successorPath
+                    break
 
                 if successorState not in visitedNodes:
                     queue.enqueue((successorState, successorPath))
 
-    print("Total Cost: ", len(paths))
-    return paths
+    print("Visited Nodes: ", count)
+    print("Total Cost: ", len(BFSpaths))
+    return BFSpaths
 
 
 # same implementation as BFS because all successors' cost are the same
@@ -96,6 +116,7 @@ def uniformCostSearch(problem):
     """
     # TODO 19
 
+    count = 0
     paths = []  # list of actions from initial state
 
     for i in range(len(problem.foodPosition)):
@@ -110,6 +131,11 @@ def uniformCostSearch(problem):
         while not pQueue.is_empty():  # loop until pQueue is empty
             # unpack the popped node, totalCost is the total cost from initial state to current state
             totalCost, (currentState, paths) = pQueue.pop()
+
+            if currentState in visitedNodes:
+                continue
+
+            count += 1
             visitedNodes.append(currentState)  # mark the current state (x,y) as visited
 
             if currentState in problem.foodPosition:  # check whether the current state (x,y) is food state
@@ -118,7 +144,8 @@ def uniformCostSearch(problem):
                 break  # start UCS again with new starting node as the current food position
 
             if problem.isGoalState(currentState):
-                print("Total Cost: ", len(successorPath))
+                print("Explored Node: ", count)
+                print("Total Cost: ", len(paths))
                 return paths
 
             successors = problem.getSuccessors(currentState)  # get current node's successors
@@ -136,7 +163,8 @@ def uniformCostSearch(problem):
                     # therefore high chance of leading to illegal actions
                     problem.start = currentState
 
-    print("Total Cost: ", len(successorPath))
+    print("Explored Node: ", count)
+    print("Total Cost: ", len(paths))
     return paths
 
 
@@ -157,32 +185,30 @@ def singleFoodSearchHeuristic(state, problem=None):
     pass
 
 
-def multiFoodSearchHeuristic(state, problem=None):
+def multiFoodSearchHeuristic(coordinate, problem=None):
     """
     A heuristic function for the problem of multi-food search
     """
     agentToFood = []
-    foodToFood = [0]
+    foodToFood = []
 
-    try:
-        firstFood = problem.foodPosition[0]
-        mahattanMin = util.manhattanDistance(state, firstFood)
-
-        agentToFood.append(getMazeDistance(state, firstFood, problem))
-    except:
-        mahattanMin = 1000000000
+    if len(problem.foodPosition) == 0:
+        return 0
 
     for food in problem.foodPosition:
-        mahattanAgent = util.manhattanDistance(state, food)
-        if mahattanAgent < mahattanMin:
-            agentToFood.append(getMazeDistance(state, food, problem))
-            mahattanMin = mahattanAgent
+        agentToFood.append((util.manhattanDistance(coordinate, food), food))
 
-        for food2 in problem.foodPosition:
-            if food != food2:
-                foodToFood.append(getMazeDistance(food, food2, problem))
+    mahattanMin, coordinateMin = min(agentToFood)
 
-    return min(agentToFood)
+    for food in problem.foodPosition:
+        foodToFood.append(util.manhattanDistance(coordinateMin, food))
+
+    minFoodDistance = min(foodToFood)
+
+    # closestFood = getMazeDistance(coordinate, mahattanMin, problem)
+    # furthestFood = getMazeDistance(mahattanMax[0], mahattanMax[1], problem)
+
+    return mahattanMin + minFoodDistance + len(problem.foodPosition) - 2
     # return 0
 
     # TODO 21
@@ -195,6 +221,7 @@ def aStarSearch(problem, heuristic=singleFoodSearchHeuristic):
         heuristic = multiFoodSearchHeuristic
 
     path = []
+    count = 0
     for i in range(n):
         frontier = util.PriorityQueue()
         exploredNodes = []
@@ -204,11 +231,18 @@ def aStarSearch(problem, heuristic=singleFoodSearchHeuristic):
 
         frontier.push(startNode, startNodeHeuristic)
 
-        while not frontier.isEmpty():
+        while not frontier.is_empty():
             currentCost, (currentState, actions) = frontier.pop()
+
+            if currentState in exploredNodes:
+                continue
+
+            count += 1
             exploredNodes.append(currentState)  # put popped node into explored list
 
             if problem.isGoalState(currentState):
+                print("Explored Node: ", count)
+                print("Total Cost: ", len(path))
                 return actions
 
             if currentState in problem.foodPosition:
@@ -217,17 +251,17 @@ def aStarSearch(problem, heuristic=singleFoodSearchHeuristic):
                 path = actions
                 break
 
-            else:
-                successors = problem.getSuccessors(currentState)
-                for successorState, successorAction in successors:  # examine each successor
-                    if successorState not in exploredNodes:
-                        newAction = actions + [successorAction]
-                        newCost = problem.getCostOfActions(newAction) + heuristic(currentState, problem)
-                        successorNode = successorState, newAction
-                        frontier.update(successorNode, newCost)
+            successors = problem.getSuccessors(currentState)
+            for successorState, successorAction in successors:  # examine each successor
+                if successorState not in exploredNodes:
+                    newAction = actions + [successorAction]
+                    newCost = problem.getCostOfActions(newAction) + heuristic(currentState, problem)
+                    successorNode = successorState, newAction
+                    frontier.update(successorNode, newCost)
 
+    print("Explored Node: ", count)
+    print("Total Cost: ", len(path))
     return actions
-
 
 
 def getMazeDistance(start, end, problem):
