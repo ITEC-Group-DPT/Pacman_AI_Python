@@ -112,6 +112,7 @@ class MultiFoodSearchProblem(SearchProblem):
     def isGoalState(self, state):
         return self.goal is not None and state == self.goal
 
+
     def getSuccessors(self, state):
         successors = []
         for action in [Directions.NORTH, Directions.EAST, Directions.WEST, Directions.SOUTH]:

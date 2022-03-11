@@ -63,8 +63,8 @@ def breadthFirstSearch(problem):
         queue.enqueue(start)
 
         while not queue.is_empty():
-
             currentState, paths = queue.dequeue()
+            visitedNodes.append(currentState)
 
             visitedNodes.append(currentState)
             if currentState in problem.foodPosition:
@@ -88,11 +88,53 @@ def breadthFirstSearch(problem):
     return paths
 
 
+# same implementation as BFS because all successors' cost are the same
 def uniformCostSearch(problem):
     """
     return a path to the goal
     """
     # TODO 19
+
+    paths = []  # list of actions from initial state
+
+    for i in range(len(problem.foodPosition)):
+        pQueue = util.PriorityQueue()
+        visitedNodes = []
+        # a state is a position (x, y)
+        # a node contains its state (position) and the path from initial node
+        # assign the starting node with its position and paths from initial node
+        startNode = (problem.getStartState(), paths)
+        pQueue.push(startNode, 0)  # push it into the priority queue
+
+        while not pQueue.isEmpty():  # loop until pQueue is empty
+            # unpack the popped node, totalCost is the total cost from initial state to current state
+            totalCost, (currentState, paths) = pQueue.pop()
+            visitedNodes.append(currentState)  # mark the current state (x,y) as visited
+
+            if currentState in problem.foodPosition:  # check whether the current state (x,y) is food state
+                problem.start = currentState  # assign the new starting state as current state
+                problem.foodPosition.remove(currentState)  # remove the food from the food list (already eaten)
+                break  # start UCS again with new starting node as the current food position
+
+            if problem.isGoalState(currentState):
+                return paths
+
+            successors = problem.getSuccessors(currentState)  # get current node's successors
+            for successorState, successorAction in successors:  # for each successor
+                if successorState not in visitedNodes:  # check whether successor is visited
+                    successorPath = paths + [successorAction]  # add current path with a new successor's actions
+                    successorNode = (successorState, successorPath)  # new successor node
+
+                    newTotalCost = totalCost + 1  # in pacman, every successor has a cost of 1
+                    pQueue.update(successorNode, newTotalCost)  # push the new successor in pQueue
+                else:
+                    # happens when all nodes have been traversed
+                    # update the new start node as the current state
+                    # if you don't update, the next for loop will use the previous starting node
+                    # therefore high chance of leading to illegal actions
+                    problem.start = currentState
+
+    return paths
 
 
 def nullHeuristic(state, problem=None):
@@ -183,42 +225,6 @@ def aStarSearch(problem, heuristic=singleFoodSearchHeuristic):
 
     return actions
 
-
-def bfs2(problem):
-    """Search the shallowest nodes in the search tree first."""
-
-    # to be explored (FIFO)
-    frontier = util.Queue()
-
-    # previously expanded states (for cycle checking), holds states
-    exploredNodes = []
-
-    startState = problem.getStartState()
-    startNode = (startState, [])  # (state, action, cost)
-
-    frontier.enqueue(startNode)
-
-    while not frontier.is_empty():
-        # begin exploring first (earliest-pushed) node on frontier
-        currentState, actions = frontier.dequeue()
-
-        if currentState not in exploredNodes:
-            # put popped node state into explored list
-            exploredNodes.append(currentState)
-
-            if problem.isGoalState(currentState):
-                return actions
-            else:
-                # list of (successor, action, stepCost)
-                successors = problem.getSuccessors(currentState)
-
-                for succState, succAction in successors:
-                    successorPath = actions + [succAction]
-
-                    succNode = (succState, successorPath)
-                    frontier.enqueue(succNode)
-
-    return actions
 
 
 def getMazeDistance(start, end, problem):
