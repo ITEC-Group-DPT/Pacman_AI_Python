@@ -6,6 +6,7 @@ import problems
 from game import Directions
 import util
 import copy
+from collections import defaultdict
 
 n = Directions.NORTH
 s = Directions.SOUTH
@@ -26,13 +27,13 @@ def depthFirstSearch(problem):
         if curState not in visitedNodes:
             visitedNodes.append(curState)
 
-            if problem.isGoalState(curState):
-                return paths
-
             successors = problem.getSuccessors(curState)
 
             for successorState, successorAction in successors:
                 successorPath = paths + [successorAction]
+                if problem.isGoalState(successorState):
+                    return successorPath
+
                 stack.push((successorState, successorPath))
 
     return paths
@@ -40,31 +41,81 @@ def depthFirstSearch(problem):
 
 def breadthFirstSearch(problem):
     queue = util.Queue()
-    visitedNodes = []
+    visitedNodes = defaultdict()
 
     startNode = (problem.getStartState(), [])
     queue.enqueue(startNode)
 
     while not queue.is_empty():
         curState, paths = queue.dequeue()
-        if curState not in visitedNodes:
-            visitedNodes.append(curState)
 
-            if problem.isGoalState(curState):
-                return paths
+        curCoordinate, curFoodPosition = curState
+        try:
+            visitedNodes[curCoordinate]
+        except:
+            visitedNodes.setdefault(curCoordinate, [])
+
+        if curFoodPosition not in visitedNodes[curCoordinate]:
+
+            if len(visitedNodes[curCoordinate]) > 0:
+                minFoodRemain = min(map(len, visitedNodes[curCoordinate]))
+
+                if len(curFoodPosition) > minFoodRemain:
+                    continue
+
+            visitedNodes[curState[0]].append(curState[1])
 
             successors = problem.getSuccessors(curState)
 
             for successorState, successorAction in successors:
                 successorPath = paths + [successorAction]
+
+                if problem.isGoalState(successorState):
+                    return successorPath
+
                 queue.enqueue((successorState, successorPath))
 
     return paths
 
 
-# same implementation as BFS because all successors' cost are the same
 def uniformCostSearch(problem):
+    frontier = util.PriorityQueue()
+    visitedNodes = defaultdict()
 
+    startNode = (problem.getStartState(), [])
+    frontier.push(startNode, 0)
+
+    while not frontier.is_empty():
+        curCost, curNode = frontier.pop()
+        (curState, curPath) = curNode
+
+        curCoordinate, curFoodPosition = curState
+        try:
+            visitedNodes[curCoordinate]
+        except:
+            visitedNodes.setdefault(curCoordinate, [])
+
+        if curFoodPosition not in visitedNodes[curCoordinate]:
+
+            if len(visitedNodes[curCoordinate]) > 0:
+                minFoodRemain = min(map(len, visitedNodes[curCoordinate]))
+
+                if len(curFoodPosition) > minFoodRemain:
+                    continue
+
+            visitedNodes[curState[0]].append(curState[1])
+
+            if problem.isGoalState(curState):
+                return curPath
+
+            successors = problem.getSuccessors(curState)
+
+            for successorState, successorAction in successors:
+                # if successorState not in visitedNodes:
+                successorPath = curPath + [successorAction]
+                frontier.update((successorState, successorPath), len(successorPath))
+
+    return curPath
     pass
 
 
