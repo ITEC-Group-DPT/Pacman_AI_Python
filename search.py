@@ -28,19 +28,20 @@ def depthFirstSearch(problem):
             currentState, paths = stack.pop()
 
             visitedNodes.append(currentState)
-            if currentState in problem.foodPosition:
-                problem.start = currentState
-                problem.foodPosition.remove(currentState)
-                break
 
             successors = problem.getSuccessors(currentState)
 
             for successorState, successorAction in successors:
                 successorPath = paths + [successorAction]
 
-                if problem.isGoalState(successorState):
-                    print("Total Cost: ", len(successorPath))
-                    return successorPath
+                if currentState in problem.foodPosition:
+                    problem.start = currentState
+                    problem.foodPosition.remove(currentState)
+
+                    if problem.isGoalState(successorState):
+                        print("Total Cost: ", len(successorPath))
+                        return successorPath
+                    stack.items = []
 
                 if successorState not in visitedNodes:
                     stack.push((successorState, successorPath))
@@ -106,7 +107,7 @@ def uniformCostSearch(problem):
         startNode = (problem.getStartState(), paths)
         pQueue.push(startNode, 0)  # push it into the priority queue
 
-        while not pQueue.isEmpty():  # loop until pQueue is empty
+        while not pQueue.is_empty():  # loop until pQueue is empty
             # unpack the popped node, totalCost is the total cost from initial state to current state
             totalCost, (currentState, paths) = pQueue.pop()
             visitedNodes.append(currentState)  # mark the current state (x,y) as visited
@@ -117,6 +118,7 @@ def uniformCostSearch(problem):
                 break  # start UCS again with new starting node as the current food position
 
             if problem.isGoalState(currentState):
+                print("Total Cost: ", len(successorPath))
                 return paths
 
             successors = problem.getSuccessors(currentState)  # get current node's successors
@@ -134,6 +136,7 @@ def uniformCostSearch(problem):
                     # therefore high chance of leading to illegal actions
                     problem.start = currentState
 
+    print("Total Cost: ", len(successorPath))
     return paths
 
 
