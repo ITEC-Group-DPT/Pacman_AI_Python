@@ -14,51 +14,77 @@ w = Directions.WEST
 
 
 def depthFirstSearch(problem):
-    pass
+    paths = []
 
-    # TODO 17
+    while len(problem.foodPosition) != 0:
+        stack = util.Stack()
+        visitedNodes = []
+        start = (problem.getStartState(), paths)
+
+        stack.push(start)
+
+        while not stack.is_empty():
+
+            currentState, paths = stack.pop()
+
+            visitedNodes.append(currentState)
+            if currentState in problem.foodPosition:
+                problem.start = currentState
+                problem.foodPosition.remove(currentState)
+                break
+
+            successors = problem.getSuccessors(currentState)
+
+            for successorState, successorAction in successors:
+                successorPath = paths + [successorAction]
+
+                if problem.isGoalState(successorState):
+                    print("Total Cost: ", len(successorPath))
+                    return successorPath
+
+                if successorState not in visitedNodes:
+                    stack.push((successorState, successorPath))
+
+    print("Total Cost: ", len(paths))
+    return paths
 
 
 def breadthFirstSearch(problem):
-    """
-    return a path to the goal
-    """
-    """Search the shallowest nodes in the search tree first."""
     # startState = problem.getStartState()
 
     # #to be explored (FIFO)
     paths = []
 
-    while (len(problem.foodPosition) != 0):
+    while len(problem.foodPosition) != 0:
         queue = util.Queue()
         visitedNodes = []
         start = (problem.getStartState(), paths)
 
         queue.enqueue(start)
 
-        while queue.is_empty() == False:
+        while not queue.is_empty():
 
             currentState, paths = queue.dequeue()
 
-            if currentState not in visitedNodes:
-                visitedNodes.append(currentState)
-                if currentState in problem.foodPosition:
-                    problem.start = currentState
-                    problem.foodPosition.remove(currentState)
-                    break
+            visitedNodes.append(currentState)
+            if currentState in problem.foodPosition:
+                problem.start = currentState
+                problem.foodPosition.remove(currentState)
+                break
 
-                if problem.isGoalState(currentState):
-                    return paths
-                else:
+            successors = problem.getSuccessors(currentState)
 
-                    successors = problem.getSuccessors(currentState)
+            for successorState, successorAction in successors:
+                successorPath = paths + [successorAction]
 
-                    for successorState, successorAction in successors:
-                        successorPath = paths + [successorAction]
+                if problem.isGoalState(successorState):
+                    print("Total Cost: ", len(successorPath))
+                    return successorPath
 
-                        queue.enqueue((successorState, successorPath))
-        if queue.is_empty():
-            problem.foodPosition.pop(0)
+                if successorState not in visitedNodes:
+                    queue.enqueue((successorState, successorPath))
+
+    print("Total Cost: ", len(paths))
     return paths
 
 
