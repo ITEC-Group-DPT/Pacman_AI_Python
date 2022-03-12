@@ -31,7 +31,6 @@ def depthFirstSearch(problem):
 
             currentState, curPath = stack.pop()
 
-
             if currentState in visitedNodes:
                 continue
             count += 1
@@ -64,7 +63,6 @@ def depthFirstSearch(problem):
 
 
 def breadthFirstSearch(problem):
-
     print("Breadth First Search")
     BFSpaths = []
 
@@ -116,7 +114,6 @@ def breadthFirstSearch(problem):
 
 # same implementation as BFS because all successors' cost are the same
 def uniformCostSearch(problem):
-
     print("Uniform Cost Search")
 
     count = 0

@@ -6,6 +6,7 @@ from game import Directions
 import problems
 import search
 
+
 class GoWestAgent(Agent):
     def getAction(self, state):
         if Directions.WEST in state.getLegalPacmanActions():
@@ -25,8 +26,8 @@ class SearchAgent(Agent):
     # def __init__(self):
     #     self.problem =None
     #     self.algorithm=None
-        
-    def registerInitialState(self, state):   
+
+    def registerInitialState(self, state):
         self.index = -1
         self.actions = self.algorithm(self.problem(state))
         """
@@ -38,7 +39,6 @@ class SearchAgent(Agent):
         state: a GameState object (pacman.py)
         """
 
-
     def getAction(self, state):
         """
         Returns the next action in the path chosen earlier (in
@@ -48,10 +48,9 @@ class SearchAgent(Agent):
         state: a GameState object (pacman.py)
         """
 
-        self.index+=1
+        self.index += 1
         return self.actions[self.index] if self.index < len(self.actions) else Directions.STOP
         # return Directions.STOP
-  
 
 
 class BFSSingleFoodSearchAgent(SearchAgent):
@@ -59,17 +58,18 @@ class BFSSingleFoodSearchAgent(SearchAgent):
         self.problem = problems.SingleFoodSearchProblem
         self.algorithm = search.breadthFirstSearch
 
+
 class BFSFoodSearchAgent(SearchAgent):
     def __init__(self):
         self.problem = problems.MultiFoodSearchProblem
         self.algorithm = search.breadthFirstSearch
-        
 
 
 class DFSSingleFoodSearchAgent(SearchAgent):
     def __init__(self):
         self.problem = problems.SingleFoodSearchProblem
         self.algorithm = search.depthFirstSearch
+
 
 class DFSFoodSearchAgent(SearchAgent):
     def __init__(self):
@@ -82,6 +82,7 @@ class UCSSingleFoodSearchAgent(SearchAgent):
         self.problem = problems.SingleFoodSearchProblem
         self.algorithm = search.uniformCostSearch
 
+
 class UCSFoodSearchAgent(SearchAgent):
     def __init__(self):
         self.problem = problems.MultiFoodSearchProblem
@@ -92,6 +93,7 @@ class AStarSingleFoodSearchAgent(SearchAgent):
     def __init__(self):
         self.problem = problems.SingleFoodSearchProblem
         self.algorithm = search.aStarSearch
+
 
 class AStarFoodSearchAgent(SearchAgent):
     def __init__(self):

@@ -59,7 +59,7 @@ class SingleFoodSearchProblem(SearchProblem):
 
         for col in range(self.foodGrid.width - 1):
             for row in range(self.foodGrid.height - 1):
-                if self.foodGrid.data[col][row] == True:
+                if self.foodGrid.data[col][row]:
                     self.foodPosition.append((col, row))
 
         pass
@@ -77,7 +77,7 @@ class SingleFoodSearchProblem(SearchProblem):
             dx, dy = Actions.directionToVector(action)
             neighborX, neighborY = int(x + dx), int(y + dy)
 
-            if self.wallGrid[neighborX][neighborY] == False:
+            if not self.wallGrid[neighborX][neighborY]:
                 nextState = (neighborX, neighborY)
                 successors.append((nextState, action))
 
@@ -102,7 +102,7 @@ class MultiFoodSearchProblem(SearchProblem):
 
         for col in range(self.foodGrid.width - 1):
             for row in range(self.foodGrid.height - 1):
-                if self.foodGrid.data[col][row] == True:
+                if self.foodGrid.data[col][row]:
                     self.foodPosition.append((col, row))
 
     def getStartState(self):
@@ -113,7 +113,6 @@ class MultiFoodSearchProblem(SearchProblem):
             return self.goal
         return len(self.foodPosition) == 0
 
-
     def getSuccessors(self, state):
         successors = []
         for action in [Directions.NORTH, Directions.EAST, Directions.WEST, Directions.SOUTH]:
@@ -121,7 +120,7 @@ class MultiFoodSearchProblem(SearchProblem):
             dx, dy = Actions.directionToVector(action)
             neighborX, neighborY = int(x + dx), int(y + dy)
 
-            if self.wallGrid[neighborX][neighborY] == False:
+            if not self.wallGrid[neighborX][neighborY]:
                 nextState = (neighborX, neighborY)
                 successors.append((nextState, action))
 
