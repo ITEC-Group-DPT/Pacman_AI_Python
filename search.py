@@ -175,7 +175,8 @@ def singleFoodSearchHeuristic(state, problem=None):
     """
     A heuristic function for the problem of single food search
     """
-    return util.manhattanDistance(state, problem.foodPosition[0])
+    manhattan = [util.manhattanDistance(state, food) for food in problem.foodPosition]
+    return min(manhattan)
     # TODO 20
     pass
 
@@ -255,7 +256,7 @@ def aStarSearch(problem, heuristic=singleFoodSearchHeuristic):
 
     print("Explored Node: ", count)
     print("Total Cost: ", len(path))
-    return actions
+    return path
 
 
 def getMazeDistance(start, end, problem):
