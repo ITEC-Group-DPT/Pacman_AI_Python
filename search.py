@@ -18,7 +18,9 @@ def depthFirstSearch(problem):
 
     count = 0
 
-    while len(problem.foodPosition) != 0:
+    print("Depth First Search")
+
+    for i in range(len(problem.foodPosition)):
         stack = util.Stack()
         visitedNodes = []
         start = (problem.getStartState(), paths)
@@ -27,17 +29,18 @@ def depthFirstSearch(problem):
 
         while not stack.is_empty():
 
-            currentState, paths = stack.pop()
-            count += 1
+            currentState, curPath = stack.pop()
+
 
             if currentState in visitedNodes:
                 continue
+            count += 1
             visitedNodes.append(currentState)
 
             successors = problem.getSuccessors(currentState)
 
             for successorState, successorAction in successors:
-                successorPath = paths + [successorAction]
+                successorPath = curPath + [successorAction]
 
                 if successorState in problem.foodPosition:
                     problem.start = successorState
@@ -47,6 +50,7 @@ def depthFirstSearch(problem):
                         print("Visited Nodes: ", count)
                         print("Total Cost: ", len(successorPath))
                         return successorPath
+
                     stack.items = []
                     paths = successorPath
                     break
@@ -60,11 +64,13 @@ def depthFirstSearch(problem):
 
 
 def breadthFirstSearch(problem):
+
+    print("Breadth First Search")
     BFSpaths = []
 
     count = 0
 
-    while len(problem.foodPosition) != 0:
+    for i in range(len(problem.foodPosition)):
         queue = util.Queue()
         visitedNodes = []
         start = (problem.getStartState(), BFSpaths)
@@ -73,20 +79,19 @@ def breadthFirstSearch(problem):
 
         while not queue.is_empty():
 
-            hehe = queue.dequeue()
-            currentState = hehe[0]
-            BFSpaths = hehe[1]
-
-            count += 1
+            currentState, paths = queue.dequeue()
 
             if currentState in visitedNodes:
                 continue
+
+            count += 1
+
             visitedNodes.append(currentState)
 
             successors = problem.getSuccessors(currentState)
 
             for successorState, successorAction in successors:
-                successorPath = BFSpaths + [successorAction]
+                successorPath = paths + [successorAction]
 
                 if successorState in problem.foodPosition:
                     problem.start = successorState
@@ -111,10 +116,8 @@ def breadthFirstSearch(problem):
 
 # same implementation as BFS because all successors' cost are the same
 def uniformCostSearch(problem):
-    """
-    return a path to the goal
-    """
-    # TODO 19
+
+    print("Uniform Cost Search")
 
     count = 0
     paths = []  # list of actions from initial state
@@ -130,7 +133,7 @@ def uniformCostSearch(problem):
 
         while not pQueue.is_empty():  # loop until pQueue is empty
             # unpack the popped node, totalCost is the total cost from initial state to current state
-            totalCost, (currentState, paths) = pQueue.pop()
+            totalCost, (currentState, curPaths) = pQueue.pop()
 
             if currentState in visitedNodes:
                 continue
@@ -141,6 +144,7 @@ def uniformCostSearch(problem):
             if currentState in problem.foodPosition:  # check whether the current state (x,y) is food state
                 problem.start = currentState  # assign the new starting state as current state
                 problem.foodPosition.remove(currentState)  # remove the food from the food list (already eaten)
+                paths = curPaths
                 break  # start UCS again with new starting node as the current food position
 
             if problem.isGoalState(currentState):
@@ -151,17 +155,11 @@ def uniformCostSearch(problem):
             successors = problem.getSuccessors(currentState)  # get current node's successors
             for successorState, successorAction in successors:  # for each successor
                 if successorState not in visitedNodes:  # check whether successor is visited
-                    successorPath = paths + [successorAction]  # add current path with a new successor's actions
+                    successorPath = curPaths + [successorAction]  # add current path with a new successor's actions
                     successorNode = (successorState, successorPath)  # new successor node
 
                     newTotalCost = totalCost + 1  # in pacman, every successor has a cost of 1
                     pQueue.update(successorNode, newTotalCost)  # push the new successor in pQueue
-                else:
-                    # happens when all nodes have been traversed
-                    # update the new start node as the current state
-                    # if you don't update, the next for loop will use the previous starting node
-                    # therefore high chance of leading to illegal actions
-                    problem.start = currentState
 
     print("Explored Node: ", count)
     print("Total Cost: ", len(paths))
@@ -205,9 +203,6 @@ def multiFoodSearchHeuristic(coordinate, problem=None):
 
     minFoodDistance = min(foodToFood)
 
-    # closestFood = getMazeDistance(coordinate, mahattanMin, problem)
-    # furthestFood = getMazeDistance(mahattanMax[0], mahattanMax[1], problem)
-
     return mahattanMin + minFoodDistance + len(problem.foodPosition) - 2
     # return 0
 
@@ -219,6 +214,8 @@ def aStarSearch(problem, heuristic=singleFoodSearchHeuristic):
 
     if type(problem) == problems.MultiFoodSearchProblem:
         heuristic = multiFoodSearchHeuristic
+
+    print("A Star Search")
 
     path = []
     count = 0
